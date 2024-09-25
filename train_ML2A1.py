@@ -44,7 +44,6 @@ class CNN(nn.Module):
         self.output_size = n_classes
         self.img_dims = img_dims
         self.idx_to_char = idx_to_char
-        #self.device = device #?
         self.net1 = nn.Sequential(
             nn.Conv2d(1, 1, 3, padding=1), #padding changes size! need to account for after flatten
             nn.Flatten())
@@ -76,7 +75,7 @@ def train(data, epochs, device, batch_size, pre_model=None, savefile=False):
     
     print('Start training')
     
-    train_batches = MyBatcher(data.train, batch_size, device).batches
+    train_batches = MyBatcher(data.train, batch_size).batches
     # # in training: add image flips???
     n_classes = data.n_classes
     
@@ -85,6 +84,8 @@ def train(data, epochs, device, batch_size, pre_model=None, savefile=False):
     else:
         model = pre_model
         
+    model = model.to(device)
+    
     optimizer = optim.Adam(model.parameters(), lr=0.01)
     loss_func = nn.CrossEntropyLoss()  #try with NLLLoss for logsoftmax?
     #loss_func = nn.NLLLoss()
@@ -103,7 +104,7 @@ def train(data, epochs, device, batch_size, pre_model=None, savefile=False):
             # gold = np.zeros(n_classes)            
             # gold[batch[1]] = float(1)
             # gold = torch.tensor(gold).reshape(1, n_classes)
-            gold = batch[1]
+            gold = batch[1].to(device)
             
             # calculate/log loss, backpropagate, update gradient
             loss = loss_func(pred, gold)

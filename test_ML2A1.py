@@ -1,7 +1,7 @@
 ### testing script ###
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import pandas as pd
-import numpy as np
+#import numpy as np
 # precision, recall, F1 (harmonic mean of precision and recall), and accuracy.
 # You can also include any other statistics or useful analysis output you feel
 # like.
@@ -14,7 +14,6 @@ def test(data, model, verbose=False):
     ## TBD load data in here
     
     model.eval()
-    
     X = data.test['imgs']
     y_true = [data.idx_to_char(label) for label in data.test['labels']]
 
@@ -40,7 +39,7 @@ def test(data, model, verbose=False):
     
     print('-'*80)
     print('Evaluation')
-    print('\nOverall accuracy:', accuracy)
+    print('\nOverall accuracy:', round(accuracy, 2))
     if verbose:
         print('\nPer-class measures')
         print(evals.transpose().round(2))

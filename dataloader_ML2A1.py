@@ -28,7 +28,8 @@ def get_ids(src_dir):
             return id2char
 
 class DataLoader:
-    def __init__(self, src_dir, data_specs, size_to=None, limit=None):
+    def __init__(self, src_dir, data_specs, device, size_to=None, limit=None):
+        self.device = device
         self.le = LabelEncoder()  # filenr 2 idx & idx 2 filenr
         self.raw_data = self._read_data(src_dir, data_specs)
         if limit:
@@ -118,17 +119,16 @@ class DataLoader:
     def _scale_imgs(self, imgs):
         size = imgs.shape
         scaled_imgs = torch.tensor(StandardScaler().fit_transform(imgs.reshape(
-                        size[0], size[1]*size[2])).reshape(size)).float()
+                        size[0], size[1]*size[2])).reshape(size)).float().to(self.device)
         return scaled_imgs
 
 
 class MyBatcher:
-    def  __init__(self, data, batch_size, device):
+    def  __init__(self, data, batch_size):
         self.batches = self._batch(data, batch_size)
-        self.device = device
         
     def _batch(self, data, batch_size):
-        permutation = torch.randperm(data['imgs'].size()[0])# device=self.device)
+        permutation = torch.randperm(data['imgs'].size()[0])
         permX = data['imgs'][permutation]
         permy = data['labels'][permutation]
         
