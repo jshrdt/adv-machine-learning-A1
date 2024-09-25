@@ -42,16 +42,14 @@ batch_size=8
 ## training ##
 
 # belongs to test script?
-load=True
-savefile='modelsep25-2'
+load=False  #sys arg for test script
+savefile='modelsep25-3'  #sys arg for train script, else doesnt save
 #'modelsep25'
 # rewrite to check for default model name file with isfile to prio loading over new training
 if load:
     # load model
-    #m = CNN(data.n_classes, data.avg_size, data.idx_to_char)
     print('Loading model from', savefile)
     m = torch.load(savefile, weights_only=False)
-    #m.load_state_dict(torch.load(savefile, weights_only=True))
     m.eval()
 else:
     m = train(data, 2, device, batch_size, savefile=savefile)

@@ -38,8 +38,8 @@ class CNN(nn.Module):
     def __init__(self, n_classes, img_dims, idx_to_char):
         super(CNN, self).__init__()
         # Initialise model params
-        self.input_size = img_dims[0]*img_dims[1]  #for 20,15=300
-        self.hsize_1 = 200  #also dynamic, w nclasses - input_size ? or as hyperparams
+        self.input_size = img_dims[0]*img_dims[1]
+        self.hsize_1 = 200
         self.hsize_2 = 150
         self.output_size = n_classes
         self.img_dims = img_dims
@@ -47,16 +47,14 @@ class CNN(nn.Module):
         #self.device = device #?
         self.net1 = nn.Sequential(
             nn.Conv2d(1, 1, 3, padding=1), #padding changes size! need to account for after flatten
-            
             nn.Flatten())
         self.net2 = nn.Sequential(
             nn.Linear(self.input_size, self.hsize_1),
             nn.Tanh(),
             nn.Linear(self.hsize_1, self.hsize_2),
             nn.Tanh(),
-            nn.Linear(self.hsize_2, self.output_size),
-            nn.LogSoftmax(dim=1)
-        )
+            nn.Linear(self.hsize_2, self.output_size)
+            )
         
     def forward(self, input_x, mode=None):
         output = self.net1(torch.Tensor(input_x).reshape(1, input_x.shape[0],
@@ -89,6 +87,7 @@ def train(data, epochs, device, batch_size, pre_model=None, savefile=False):
         
     optimizer = optim.Adam(model.parameters(), lr=0.01)
     loss_func = nn.CrossEntropyLoss()  #try with NLLLoss for logsoftmax?
+    #loss_func = nn.NLLLoss()
     for e in range(epochs):
         print(f'\nepoch {e+1}')
         e_loss = 0
