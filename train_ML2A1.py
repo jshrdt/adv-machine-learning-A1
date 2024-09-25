@@ -8,19 +8,21 @@ from dataloader_ML2A1 import *
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
+# must have
 parser.add_argument('-lg', '--languages', nargs='+', required=True,
                     help='Languages to train on. English | Thai')
 parser.add_argument('-dpi', '--dpis', nargs='+', required=True,
                     help='DPI formats to train on. 200 | 300 | 400')
 parser.add_argument('-ft', '--fonts', nargs='+', required=False,
                     help='Fonts to train on. normal|bold|italic|bold_italic')
+# optional
 parser.add_argument('-ep', '--epochs', type=int, default=5,
                     help='Number of training epochs. Any.')
 parser.add_argument('-bs', '--batch_size', type=int, default=32,
                     help='Size of training data batches. Any.')
 parser.add_argument('-s', '--savefile', default=None,
                     help='Enable saving of model, specify filename/path.')
-parser.add_argument('-srcd', '--source_diry',
+parser.add_argument('-srcd', '--source_dir',
                     default='/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/',
                     help='Pass a custom source directory to read image data from.')
 
@@ -39,16 +41,14 @@ class CNN(nn.Module):
         # define net structure
         self.net1 = nn.Sequential(
             nn.Conv2d(1, 1, 3, padding=1),
-            nn.Flatten()
-            )
+            nn.Flatten())
         
         self.net2 = nn.Sequential(
             nn.Linear(self.input_size, self.hsize_1),
             nn.Tanh(),
             nn.Linear(self.hsize_1, self.hsize_2),
             nn.Tanh(),
-            nn.Linear(self.hsize_2, self.output_size)
-            )
+            nn.Linear(self.hsize_2, self.output_size))
         
     def forward(self, input_x, mode=None):
         output = self.net1(torch.Tensor(input_x).reshape(1, input_x.shape[0],
@@ -65,7 +65,7 @@ def train(data, device, epochs, batch_size):
     print('Start training...')
     
     train_batches = MyBatcher(data.train, batch_size).batches
-    # # in training: add image flips???
+    # in training: add image flips???
     n_classes = data.n_classes
 
     # initialise model and TODO

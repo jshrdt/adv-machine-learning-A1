@@ -2,42 +2,37 @@
 import argparse
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import pandas as pd
-#import numpy as np
-# precision, recall, F1 (harmonic mean of precision and recall), and accuracy.
-# You can also include any other statistics or useful analysis output you feel
-# like.
+
 from dataloader_ML2A1 import *
 from train_ML2A1 import *
 
-
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-
+# must have
 parser.add_argument('-lg', '--languages', nargs='+', required=True,
                     help='Languages to train on. English | Thai')
 parser.add_argument('-dpi', '--dpis', nargs='+', required=True,
                     help='DPI formats to train on. 200 | 300 | 400')
 parser.add_argument('-ft', '--fonts', nargs='+', required=False,
                     help='Fonts to train on. normal|bold|italic|bold_italic')
+# optional
 parser.add_argument('-ld', '--load', default=None,
                     help='Specify filename/path to load pretrained model from.')
 parser.add_argument('-v', '--verbose', action='store_true',
                     help='Pass to receive per-class evaluation metrics '
                     + 'and lowest performing classes')
-parser.add_argument('-srcd', '--source_diry',
+parser.add_argument('-srcd', '--source_dir',
                     default='/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/',
                     help='Pass a custom source directory to read image data from.')
 
 
 ## testing ##
-def test(data, model, verbose=False):
-    ## TBD load data in here
-    
+def test(data, model, verbose=False):    
     model.eval()
     X = data.test['imgs']
     y_true = [data.idx_to_char(label) for label in data.test['labels']]
 
-    y_preds = [model(X[i].reshape(1, X[i].shape[0], X[i].shape[1])) for i in range(len(X))]
+    y_preds = [model(X[i].reshape(1, X[i].shape[0], X[i].shape[1]))
+               for i in range(len(X))]
     
     # accuracy
     accuracy = accuracy_score(y_true, y_preds)
@@ -55,7 +50,8 @@ def test(data, model, verbose=False):
     evals = pd.DataFrame((precision, recall, f1), 
                                   index=measures,
                                   columns=class_labels)
-    evals['MACROS'] = [round(sum(vals)/len(vals), 4) for vals in (precision, recall, f1)]
+    evals['MACROS'] = [round(sum(vals)/len(vals), 4)
+                       for vals in (precision, recall, f1)]
     
     print('-'*80)
     print('Evaluation')
@@ -78,14 +74,17 @@ def get_alt_train_specs():
     dpi_read = {'1': '200', '2': '300', '3': '400'}
     ft_read = {'1': 'normal', '2': 'bold', '3': 'italic', '4': 'bold_italic'}
     
-    lg_idx = input(f'Train on which languages?\n{lg_read}\n')
-    lg = [lg_read[idx] for idx in lg_idx]
+    print('Choose specifications for training data, enter single number, '
+          +'or combination (e.g. 1 -> English; 12 -> English+Thai).')
     
-    dpi_idx = input(f'Train on which resolution?\n{dpi_read}\n')
-    dpi = [dpi_read[idx] for idx in dpi_read]
+    # lg_idx = input(f'Train on which languages?\n{lg_read}\n')
+    lg = [lg_read[idx] for idx in input(f'Train on which languages?\n{lg_read}\n')]
     
-    ft_idx = input(f'Train on which fonts?\n{ft_read}\n')
-    ft = [ft_read[idx] for idx in ft_idx]
+    #dpi_idx = input(f'Train on which resolution?\n{dpi_read}\n')
+    dpi = [dpi_read[idx] for idx in input(f'Train on which resolution?\n{dpi_read}\n')]
+    
+    #ft_idx = input(f'Train on which fonts?\n{ft_read}\n')
+    ft = [ft_read[idx] for idx in input(f'Train on which fonts?\n{ft_read}\n')]
     
     specs = {'languages': lg, 'dpis': dpi, 'fonts': ft}
 
@@ -104,25 +103,18 @@ if __name__=="__main__":
         # try to load model
         print('Loading model from', args.load)
         m = torch.load(args.load, weights_only=False)
-        m.eval()
     else:
         # get info to train new model
-        train_new = input('No pre-trained model found, train new model?\n(y/n) ')
-        if train_new == 'y':
-            ## TODO how to smoothly implement this without spelling all the dpi x dpi & fonts out??
-            
-            new_specs = input(f'Train new model on same specifications as test data?\n{specs}\n(y/n) ')
-            if new_specs == 'n':
+        if input('No pre-trained model found, train new model?\n(y/n) ') == 'y':            
+            if input(f'Train new model on same specifications as test data?\n{specs}\n(y/n) ') == 'n':
                 train_specs = get_alt_train_specs()
             else:
                 train_specs = specs
                 
-            new_params = input('Keep default params for epochs(5)/batch_size(32)/savefile(None)?\n(y/n) ')
-            if new_params =='n':
-                epochs = input('Number of epochs: ')
-                b_s = input('Size of batches: ')
-                save = input('File/pathname to save model to:' )
-                
+            if input('Keep default params for epochs(5)/batch_size(32)/savefile(None)?\n(y/n) ') =='n':
+                epochs = int(input('Number of epochs: '))
+                b_s = int(input('Size of batches: '))
+                save = input('File/pathname to save model to: ')
                 m = init_train(src_dir, train_specs, device, epochs, b_s, save)
             else:
                 m = init_train(src_dir, train_specs, device)
