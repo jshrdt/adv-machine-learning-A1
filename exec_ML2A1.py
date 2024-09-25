@@ -20,7 +20,7 @@ test_specs = {'Language(s)': ['English'], 'DPI': ['200'], 'Font(s)': ['normal']}
 
 ### LOAD DATA ###
 # Get relevant filenames according to specs
-data = DataLoader(src_dir, train_specs, device, limit=None)
+data = DataLoader(src_dir, train_specs, device)
 batch_size=64
 # if test_specs:
 #     train_files = train_fnames
@@ -42,8 +42,8 @@ batch_size=64
 ## training ##
 
 # belongs to test script?
-load=True  #sys arg for test script
-savefile='modelsep25-cpu'  #sys arg for train script, else doesnt save
+load=False  #sys arg for test script
+savefile=False  #sys arg for train script, else doesnt save
 #'modelsep25'
 # rewrite to check for default model name file with isfile to prio loading over new training
 if load:
@@ -52,10 +52,9 @@ if load:
     m = torch.load(savefile, weights_only=False)
     m.eval()
 else:
-    m = train(data, 2, device, batch_size, savefile=savefile)
+    m = train(data, device, epochs=5, batch_size=batch_size, savefile=savefile)
 
 ## testing ##
 test_data = DataLoader(src_dir, test_specs, device, size_to=m.img_dims)
 test(data, m, verbose=False)
  
-

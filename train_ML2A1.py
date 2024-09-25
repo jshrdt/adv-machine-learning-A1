@@ -1,37 +1,28 @@
 ## model definition & training script ###
+import argparse
 import torch
 import torch.nn as nn
 import torch.optim as optim
-#import numpy as np
 from tqdm import tqdm
 from dataloader_ML2A1 import * 
 
-   
-# class Batcher: ##?? replace with func
-#     def __init__(self, data, device, batch_size=8, max_iter=None):
-#         self.X = data['imgs']
-#         self.y = data['labels']
-#         self.device = device
-#         self.batch_size = batch_size
-#         self.max_iter = max_iter
-#         self.curr_iter = 0
-    
-#     def __iter__(self):
-#         return self
-    
-#     def __next__(self):
-#         if self.curr_iter == self.max_iter:
-#             raise StopIteration
-#         ## rethink ur sructure, this would need a tensor already
-#         # either: shuffle when still as filename (ez shuffle, but have to restructure 
-#         # OOP; or see that u get it as torch here? )
-#         permutation = torch.randperm(self.X.size()[0], device=self.device)
-#         print(permutation)
-#         splitX = torch.split(self.X[permutation], self.batch_size)
-#         splity = torch.split(self.y[permutation], self.batch_size)
-#         self.curr_iter += 1
-        
-#         return splitX, splity
+parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('-lg', '--languages', nargs='+', required=True,
+                    help='Languages to train on. English | Thai')
+parser.add_argument('-dpi', '--dpis', nargs='+', required=True,
+                    help='DPI formats to train on. 200 | 300 | 400')
+parser.add_argument('-ft', '--fonts', nargs='+', required=False,
+                    help='Fonts to train on. normal|bold|italic|bold_italic')
+parser.add_argument('-ep', '--epochs', type=int, default=5,
+                    help='Number of training epochs. Any.')
+parser.add_argument('-bs', '--batch_size', type=int, default=32,
+                    help='Size of training data batches. Any.')
+parser.add_argument('-s', '--savefile', default=None,
+                    help='Enable saving of model, specify filename/path.')
+parser.add_argument('-srcd', '--source_diry',
+                    default='/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/',
+                    help='Pass a custom source directory to read image data from.')
 
 ## define model structure ##
 class CNN(nn.Module):
@@ -44,9 +35,13 @@ class CNN(nn.Module):
         self.output_size = n_classes
         self.img_dims = img_dims
         self.idx_to_char = idx_to_char
+        
+        # define net structure
         self.net1 = nn.Sequential(
-            nn.Conv2d(1, 1, 3, padding=1), #padding changes size! need to account for after flatten
-            nn.Flatten())
+            nn.Conv2d(1, 1, 3, padding=1),
+            nn.Flatten()
+            )
+        
         self.net2 = nn.Sequential(
             nn.Linear(self.input_size, self.hsize_1),
             nn.Tanh(),
@@ -59,64 +54,73 @@ class CNN(nn.Module):
         output = self.net1(torch.Tensor(input_x).reshape(1, input_x.shape[0],
                                         input_x.shape[1]*input_x.shape[2]))
         preds = self.net2(output.reshape(-1, self.input_size))
-        #raise ValueError
-        # from vid: 
-        # current_matrix = batch.permute(0,3,1,2) #need permute??
-        # current_matrix = self.layers1(current_matrix)
-        # output_matrix = self.layers2(current_matrix.reshape(-1, input_size))
+
         if mode=='train':
             return preds
         else:
             return self.idx_to_char(int(preds.argmax()))
         
 ## training loop ##
-def train(data, epochs, device, batch_size, pre_model=None, savefile=False):
-    ## TBD load data in here?
-    
-    print('Start training')
+def train(data, device, epochs, batch_size):    
+    print('Start training...')
     
     train_batches = MyBatcher(data.train, batch_size).batches
     # # in training: add image flips???
     n_classes = data.n_classes
-    
-    if not pre_model:
-        model = CNN(n_classes, data.avg_size, data.idx_to_char)
-    else:
-        model = pre_model
-        
-    model = model.to(device)
-    
+
+    # initialise model and TODO
+    model = CNN(n_classes, data.avg_size, data.idx_to_char).to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.01)
-    loss_func = nn.CrossEntropyLoss()  #try with NLLLoss for logsoftmax?
-    #loss_func = nn.NLLLoss()
-    for e in range(epochs):
-        print(f'\nepoch {e+1}')
-        e_loss = 0
+    loss_func = nn.CrossEntropyLoss()
+    
+    for epoch in range(epochs):
+        print(f'\nepoch {epoch+1}')
+        # Reset loss for epoch
+        total_loss = 0
                 
         for batch in tqdm(train_batches):
-                    
+            # Reset gradient.
             optimizer.zero_grad()
-            
-            # make prediction
+            # Make prediction
             pred = (model(batch[0], mode='train')).double()
-            
-            # get gold label (tensor of len n_classes, one-hot for gold label idx)
-            # gold = np.zeros(n_classes)            
-            # gold[batch[1]] = float(1)
-            # gold = torch.tensor(gold).reshape(1, n_classes)
+            # Get gold label.
             gold = batch[1].to(device)
-            
-            # calculate/log loss, backpropagate, update gradient
+            # Calculate+log loss, backpropagate, and update gradient.
             loss = loss_func(pred, gold)
-            e_loss += loss
-            # total_loss += loss
+            total_loss += loss
             loss.backward()
             optimizer.step()
             
-        print(f'loss {e_loss}')
+        print(f'loss {total_loss}')
+        
+    print('Training complete.')
+    return model
+
+def init_train(src_dir, specs, device, eps=5, b_s=32, savefile=None):
+    # Read data & process data accordings to specs from source directory
+    data = DataLoader(src_dir, specs, device) ## TODO change src_dir to arg parse src dir
+
+    # Train model
+    m = train(data, device, eps, b_s)
     
     if savefile:
-        torch.save(model, savefile)
-       # torch.save(model.state_dict(), savefile)    
+        torch.save(m, savefile)
+        print('Model saved to ', savefile)
     
-    return model
+    return m
+    
+
+if __name__=="__main__":
+    # defaults
+    src_dir = '../ThaiOCR/ThaiOCR-TrainigSet/'
+    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
+
+    # Get specifcations for training data from argparse
+    args = parser.parse_args()
+    specs = {'languages': args.languages, 'dpis': args.dpis, 'fonts': args.fonts}
+    
+    # begin training
+    model = init_train(src_dir, specs, device, args.epochs, args.batch_size,
+                       args.savefile)
+    
+

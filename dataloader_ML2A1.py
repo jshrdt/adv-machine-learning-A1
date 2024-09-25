@@ -28,14 +28,12 @@ def get_ids(src_dir):
             return id2char
 
 class DataLoader:
-    def __init__(self, src_dir, data_specs, device, size_to=None, limit=None):
+    def __init__(self, src_dir, data_specs, device, size_to=None):
         self.device = device
         self.le = LabelEncoder()  # filenr 2 idx & idx 2 filenr
         self.raw_data = self._read_data(src_dir, data_specs)
-        if limit:
-            output = self._transform_data(self.raw_data[:limit], size_to)
-        else:
-            output = self._transform_data(self.raw_data, size_to)
+        
+        output = self._transform_data(self.raw_data, size_to)
         self.train, self.dev, self.test, self.avg_size = output
         self.n_classes = len(set(self.train['labels']))
         
@@ -49,16 +47,16 @@ class DataLoader:
         return len(self.raw_data)
                 
     def _read_data(self, src_dir, specs):
-        print('selecting files:', specs)
+        print('Selecting files...')
         # extract relevant filenames, limited by: lg(var) + charID(all) + dpi(1) + font(1/all) -> get all
         fileinfo = list()
         for root, dirs, files in os.walk(src_dir):
             root_sep = root.split('/')
             # only search directories fulfilling the specs for language, dpi & font
             # leverage uniform format across folders
-            if ((root_sep[-4] in specs['Language(s)'])
-                and (root_sep[-2] in specs['DPI']) 
-                and (root_sep[-1] in specs['Font(s)'])):
+            if ((root_sep[-4] in specs['languages'])
+                and (root_sep[-2] in specs['dpis']) 
+                and (root_sep[-1] in specs['fonts'])):
                 # then extract filename + gold label character identifier
                 # add: save the id nrs to use as index filter in charid_dict
                 for fname in files:
@@ -72,10 +70,7 @@ class DataLoader:
         return fileinfo
         
     def _transform_data(self, data_list, size_to=None):
-        print('transforming data')
-        # make possible to pass avg_size in here, will be saved in train func,
-        # then applied for any test data
-        
+        print('Transforming data...')        
         # extract and transform images
         raw_imgs = [Image.open(item[0]) for item in data_list]
         
@@ -137,4 +132,7 @@ class MyBatcher:
                     for i in range(int(data['imgs'].size()[0]/batch_size))]
 
         return batches
+    
+if __name__=="__main__":
+    pass
     
