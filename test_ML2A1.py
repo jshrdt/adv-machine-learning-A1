@@ -112,6 +112,8 @@ if __name__=="__main__":
                 train_specs = specs
                 
             if input('Keep default params for epochs(5)/batch_size(32)/savefile(None)?\n(y/n) ') =='n':
+        ## TODO dummy proof these inputs, so u can pass none, and it doesnt fail due to the 
+        # attempted int() conversion
                 epochs = int(input('Number of epochs: '))
                 b_s = int(input('Size of batches: '))
                 save = input('File/pathname to save model to: ')
