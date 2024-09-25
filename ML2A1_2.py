@@ -12,8 +12,8 @@ device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
 src_dir0 = '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
 src_dir = '../ThaiOCR/ThaiOCR-TrainigSet/'
 
-train_specs = {'lgs': ['English'], 'dpis': ['200'], 'fonts': ['normal']}
-test_specs = {'lgs': ['English'], 'dpis': ['200'], 'fonts': ['normal']}
+train_specs = {'Language(s)': ['English'], 'DPI': ['200'], 'Font(s)': ['normal']}
+test_specs = {'Language(s)': ['English'], 'DPI': ['200'], 'Font(s)': ['normal']}
 
 #est_specs=False
 # ? call with optional separate test set specs?, like in func call keyword
@@ -21,7 +21,7 @@ test_specs = {'lgs': ['English'], 'dpis': ['200'], 'fonts': ['normal']}
 ### LOAD DATA ###
 # Get relevant filenames according to specs
 data = DataLoader(src_dir, train_specs, limit=5000)
-
+batch_size=8
 # if test_specs:
 #     train_files = train_fnames
 #     test_files = load_data(src_dir, test_specs)
@@ -40,20 +40,25 @@ data = DataLoader(src_dir, train_specs, limit=5000)
 
 
 ## training ##
-load=False
-save=False
+
+# belongs to test script?
+load=True
+savefile='modelsep25-2'
+#'modelsep25'
 # rewrite to check for default model name file with isfile to prio loading over new training
 if load:
     # load model
-    m = CNN(data.n_classes, data.avg_size, data.idx_to_char)
-    m.load_state_dict(torch.load('modelsep23', weights_only=True))
+    #m = CNN(data.n_classes, data.avg_size, data.idx_to_char)
+    print('Loading model from', savefile)
+    m = torch.load(savefile, weights_only=False)
+    #m.load_state_dict(torch.load(savefile, weights_only=True))
     m.eval()
 else:
-    m = train(data, 2, device, save=save)
+    m = train(data, 2, device, batch_size, savefile=savefile)
 
 ## testing ##
 test_data = DataLoader(src_dir, test_specs, m.img_dims)
-test(data, m, verbose=True)
+test(data, m, verbose=False)
 
 
 ## use cpu ##

@@ -48,16 +48,16 @@ class DataLoader:
         return len(self.raw_data)
                 
     def _read_data(self, src_dir, specs):
-        print('selecting files')
+        print('selecting files:', specs)
         # extract relevant filenames, limited by: lg(var) + charID(all) + dpi(1) + font(1/all) -> get all
         fileinfo = list()
         for root, dirs, files in os.walk(src_dir):
             root_sep = root.split('/')
             # only search directories fulfilling the specs for language, dpi & font
             # leverage uniform format across folders
-            if ((root_sep[-4] in specs['lgs'])
-                and (root_sep[-2] in specs['dpis']) 
-                and (root_sep[-1] in specs['fonts'])):
+            if ((root_sep[-4] in specs['Language(s)'])
+                and (root_sep[-2] in specs['DPI']) 
+                and (root_sep[-1] in specs['Font(s)'])):
                 # then extract filename + gold label character identifier
                 # add: save the id nrs to use as index filter in charid_dict
                 for fname in files:

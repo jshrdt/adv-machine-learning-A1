@@ -35,7 +35,7 @@ from ML2A1_2_helper import *
 
 ## define model structure ##
 class CNN(nn.Module):
-    def __init__(self, n_classes, img_dims, batch_size, idx_to_char):
+    def __init__(self, n_classes, img_dims, idx_to_char):
         super(CNN, self).__init__()
         # Initialise model params
         self.input_size = img_dims[0]*img_dims[1]  #for 20,15=300
@@ -73,7 +73,9 @@ class CNN(nn.Module):
             return self.idx_to_char(int(preds.argmax()))
         
 ## training loop ##
-def train(data, epochs, device, batch_size=8, pre_model=None, save=False):
+def train(data, epochs, device, batch_size, pre_model=None, savefile=False):
+    ## TBD load data in here?
+    
     print('Start training')
     
     train_batches = MyBatcher(data.train, batch_size, device).batches
@@ -81,7 +83,7 @@ def train(data, epochs, device, batch_size=8, pre_model=None, save=False):
     n_classes = data.n_classes
     
     if not pre_model:
-        model = CNN(n_classes, data.avg_size, batch_size, data.idx_to_char)
+        model = CNN(n_classes, data.avg_size, data.idx_to_char)
     else:
         model = pre_model
         
@@ -113,7 +115,8 @@ def train(data, epochs, device, batch_size=8, pre_model=None, save=False):
             
         print(f'loss {e_loss}')
     
-    if save:
-        torch.save(model.state_dict(), "modelsep23")    
+    if savefile:
+        torch.save(model, savefile)
+       # torch.save(model.state_dict(), savefile)    
     
     return model
