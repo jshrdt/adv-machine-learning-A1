@@ -62,9 +62,10 @@ def test(data, model, verbose=False):
         print('-'*80)
         df = evals.transpose()    
         for measure in measures:
-            min_val = round(df.describe().loc['25%'].loc[measure], 4)
-            print(f'\n{measure} performance below 25th percentile ({min_val}):')
-            print(df[df[measure] <= min_val][measure])
+            perc25 = round(df.describe().loc['25%'].loc[measure], 4) 
+            min_val = perc25 if perc25 <0.5 else 0.5
+            print(f'\n{measure} performance below {min_val}:')
+            print(df[df[measure] < min_val][measure])
     else:
         print('\nPerformance across all classes')
         print(evals['MACROS'])
