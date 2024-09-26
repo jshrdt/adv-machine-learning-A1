@@ -4,21 +4,21 @@ Quickstart:
 
 Train: 
 (1) Train new model, [optional: save to file].
-$ python3 train_ML2A1.py -lg Thai -dpi 200 -ft normal [-s Thai200normal_model]
+* $ python3 train_ML2A1.py -lg Thai -dpi 200 -ft normal [-s Thai200normal_model]
 
 Test: 
 (1) Test pre-trained model loaded from file.
-$ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -ld Thai200normal_model
+* $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -ld Thai200normal_model
 
 (2) Tain & test new model, optional: save to file.
-$ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal
->> No pre-trained model found, train new model?
->> (y/n) y
->> Train new model on same specifications as test data?
->> {'languages': ['Thai'], 'dpis': ['200'], 'fonts': ['normal']}
->> (y/n) y
->> Keep default params for epochs(5)/batch_size(32)/savefile(None)?
->> (y/n) y
+* $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal
+* > No pre-trained model found, train new model?
+* > (y/n) y
+* > Train new model on same specifications as test data?
+* > {'languages': ['Thai'], 'dpis': ['200'], 'fonts': ['normal']}
+* > (y/n) y
+* > Keep default params for epochs(5)/batch_size(32)/savefile(None)?
+* > (y/n) y
 
 
 ## Dataloader
@@ -32,9 +32,9 @@ Detailed overview | full functionality
 ## Train
 To train a new model, call the train script and specify what data to use from training repository. 
 The following required arguments can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...)
-	--languages (-lg):	Thai | English | Thai English
-	--dpis (-dpi): 		200 | 300 | 400 | ...
-	--fonts (-ft):		normal | bold | italic | italic_bold | ...
+* --languages (-lg):	Thai | English | Thai English
+* --dpis (-dpi): 		200 | 300 | 400 | ...
+* --fonts (-ft):		normal | bold | italic | italic_bold | ...
 
 The following arguments are optional. The first two alter behaviour during the training loop. --Savefile allows the trained model to be saved under the passed filename/path. The final argument may be used to specify a different directory to read the source data from.
 	--epochs (-ep):		any integer, defaults to 5
