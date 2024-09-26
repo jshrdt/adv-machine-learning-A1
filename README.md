@@ -1,62 +1,58 @@
 # adv-machine-learning-A1
 
-Quickstart:
+## Quickstart
 
-Train:  
+### Running train_ML2A1.py:
+
 (1) Train new model, [optional: save to file].  
 > $ python3 train_ML2A1.py -lg Thai -dpi 200 -ft normal [-s Thai200normal_model]
 
-Test:  
+### Running test_ML2A1.py:
+
 (1) Test pre-trained model loaded from file.
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -ld Thai200normal_model
 
-(2) Tain & test new model, optional: save to file.
+(2) Train & test new model, optional: save to file.
 * $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal
-> No pre-trained model found, train new model?
-> (y/n) y
-> Train new model on same specifications as test data?
-> {'languages': ['Thai'], 'dpis': ['200'], 'fonts': ['normal']}
-> (y/n) y
-> Keep default params for epochs(5)/batch_size(32)/savefile(None)?
-> (y/n) y
+> No pre-trained model found, train new model?  
+>> (y/n) y  
+>> Train new model on same specifications as test data?  
+>> {'languages': ['Thai'], 'dpis': ['200'], 'fonts': ['normal']}  
+>> (y/n) y  
+>> Keep default params for epochs(5)/batch_size(32)/savefile(None)?  
+>> (y/n) y  
 
+___
 
-## Dataloader
+## Detailed overview
 
-TODO
+### Training with train_ML2A1.py
 
-_____________________________________________
-
-Detailed overview | full functionality
-
-## Train
-To train a new model, call the train script and specify what data to use from training repository. 
-The following required arguments can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...)
+To train a new model, call the train script and specify what data to use from the training repository. This file also contains the NN model architecture.  
+The following arguments are required and can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
 * --languages (-lg):	Thai | English | Thai English
-* --dpis (-dpi): 		200 | 300 | 400 | ...
-* --fonts (-ft):		normal | bold | italic | italic_bold | ...
+* --dpis (-dpi): 	200 | 300 | 400 | ...
+* --fonts (-ft):	normal | bold | italic | italic_bold | ...
 
 The following arguments are optional. The first two alter behaviour during the training loop. --Savefile allows the trained model to be saved under the passed filename/path. The final argument may be used to specify a different directory to read the source data from.
-	--epochs (-ep):		any integer, defaults to 5
-	--batch_size (-bs):	any integer, defaults to 32
-	--savefile (-s)		any filename/path, defaults to None
-	--source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
-
-File also holds the NN definition.
+* --epochs (-ep):	any integer, defaults to 5
+* --batch_size (-bs):	any integer, defaults to 32
+* --savefile (-s)	any filename/path, defaults to None
+* --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
 
 
-## Test
-To test a model, call the test script and specify what data to test it on. The script can either test a pretrained model (passed with --load), or will otherwise interactively ask for information to train a new model on execution.
+## Testing with test_ML2A1.py
 
-The following required arguments can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...)
-	--languages (-lg):	Thai | English | Thai English
-	--dpis (-dpi): 		200 | 300 | 400 | ...
-	--fonts (-ft):		normal | bold | italic | italic_bold | ...
+To test a model, call the test script and specify what data to test it on. The script can either test a pretrained model (passed with --load), or will otherwise interactively ask for information to train a new model on execution.  
+The following arguments are required and can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
+* --languages (-lg):	Thai | English | Thai English
+* --dpis (-dpi): 	200 | 300 | 400 | ...
+* --fonts (-ft):	normal | bold | italic | italic_bold | ...
 
 The following arguments are optional. --load specifies where to find the pretrained model, if left unspecified/invalid, a new model may be trained with the train script. --verbose determines the amount of detail printed during model evaluation. The final argument may be used to specify a different directory to read the source data from.
-	--load (-ld):		any filename/path, defaults to None
-	--verbose (-v):		on/off flag
-	--source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
+* --load (-ld):		any filename/path, defaults to None
+* --verbose (-v):	on/off flag
+* --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
 
 ## Dataloader
 
