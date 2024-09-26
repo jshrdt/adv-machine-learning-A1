@@ -92,9 +92,12 @@ def get_alt_train_specs():
         
 if __name__=="__main__":
     # defaults
-    src_dir = '../ThaiOCR/ThaiOCR-TrainigSet/'
+    # defaults
+    src_dir_cpu = '../ThaiOCR/ThaiOCR-TrainigSet/'
+    src_dir_gpu = '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
     device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
-    
+    src_dir = src_dir_gpu if torch.cuda.is_available() else src_dir_cpu
+     
     # Get specifcations for training data from argparse
     args = parser.parse_args()
     specs = {'languages': args.languages, 'dpis': args.dpis, 'fonts': args.fonts}

@@ -113,8 +113,10 @@ class DataLoader:
     
     def _scale_imgs(self, imgs):
         size = imgs.shape
-        scaled_imgs = torch.tensor(StandardScaler().fit_transform(imgs.reshape(
-                        size[0], size[1]*size[2])).reshape(size)).float().to(self.device)
+        scaled_imgs = torch.tensor(StandardScaler().fit_transform(
+                        imgs.reshape(size[0], size[1]*size[2])
+                        ).reshape(size)
+                                   ).float().to(self.device)
         return scaled_imgs
 
 

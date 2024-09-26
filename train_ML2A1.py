@@ -6,7 +6,8 @@ import torch.optim as optim
 from tqdm import tqdm
 from dataloader_ML2A1 import * 
 
-parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser(formatter_class=
+                                 argparse.ArgumentDefaultsHelpFormatter)
 
 # must have
 parser.add_argument('-lg', '--languages', nargs='+', required=True,
@@ -24,7 +25,7 @@ parser.add_argument('-s', '--savefile', default=None,
                     help='Enable saving of model, specify filename/path.')
 parser.add_argument('-srcd', '--source_dir',
                     default='/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/',
-                    help='Pass a custom source directory to read image data from.')
+                    help='Pass a custom source directory pointing to image data.')
 
 ## define model structure ##
 class CNN(nn.Module):
@@ -98,7 +99,7 @@ def train(data, device, epochs, batch_size):
 
 def init_train(src_dir, specs, device, eps=5, b_s=32, savefile=None):
     # Read data & process data accordings to specs from source directory
-    data = DataLoader(src_dir, specs, device) ## TODO change src_dir to arg parse src dir
+    data = DataLoader(src_dir, specs, device)
 
     # Train model
     m = train(data, device, eps, b_s)
@@ -112,8 +113,10 @@ def init_train(src_dir, specs, device, eps=5, b_s=32, savefile=None):
 
 if __name__=="__main__":
     # defaults
-    src_dir = '../ThaiOCR/ThaiOCR-TrainigSet/'
+    src_dir_cpu = '../ThaiOCR/ThaiOCR-TrainigSet/'
+    src_dir_gpu = '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
     device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
+    src_dir = src_dir_gpu if torch.cuda.is_available() else src_dir_cpu
 
     # Get specifcations for training data from argparse
     args = parser.parse_args()

@@ -1,17 +1,33 @@
 # adv-machine-learning-A1
 
-Quick overview | main functionality:
+Quickstart:
 
 Train: 
-(1) Train new model, optional: save to file.
+(1) Train new model, [optional: save to file].
+$ python3 train_ML2A1.py -lg Thai -dpi 200 -ft normal [-s Thai200normal_model]
 
 Test: 
 (1) Test pre-trained model loaded from file.
+$ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -ld Thai200normal_model
+
 (2) Tain & test new model, optional: save to file.
+$ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal
+>> No pre-trained model found, train new model?
+>> (y/n) y
+>> Train new model on same specifications as test data?
+>> {'languages': ['Thai'], 'dpis': ['200'], 'fonts': ['normal']}
+>> (y/n) y
+>> Keep default params for epochs(5)/batch_size(32)/savefile(None)?
+>> (y/n) y
+
 
 ## Dataloader
 
 TODO
+
+_____________________________________________
+
+Detailed overview | full functionality
 
 ## Train
 To train a new model, call the train script and specify what data to use from training repository. 
@@ -155,3 +171,6 @@ F1-score performance below 25th percentile (0.681):
 ข           0.666667
 อึ้(ติด)    0.571429
 อี่(ติด)    0.173913
+
+Challenges:
+On testing thai200normal, a new model would usually hover around 0.8 overall accuracy but sometimes?? Drop down to 0.01???
