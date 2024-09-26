@@ -14,6 +14,7 @@
 
 (2) Train & test a new model, optional: save to file.
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal  
+
 > No pre-trained model found, train new model?  
 > (y/n) 
 >> y  
