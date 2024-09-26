@@ -64,7 +64,7 @@ def test(data, model, verbose=False):
         for measure in measures:
             perc25 = round(df.describe().loc['25%'].loc[measure], 4) 
             min_val = perc25 if perc25 <0.5 else 0.5
-            print(f'\n{measure} performance below {min_val}:')
+            print(f'\n{measure} score below {min_val}:')
             print(df[df[measure] < min_val][measure])
     else:
         print('\nPerformance across all classes')

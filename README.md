@@ -36,7 +36,7 @@ ___
 
 To train a new model, run the train script and specify what data to use from the training repository. This file also contains the NN model architecture.
 
-The following arguments are required and can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
+The following arguments are required and determine which files will be extracted from the source directory to use during training. They can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
 * --languages (-lg):	Thai | English | Thai English
 * --dpis (-dpi): 	200 | 300 | 400 | ...
 * --fonts (-ft):	normal | bold | italic | italic_bold | ...
@@ -54,7 +54,7 @@ The following arguments are optional. The first two alter behaviour during the t
 
 To test a model, run the test script and specify what data to test on. The script can either test a pre-trained model (passed with --load), or will otherwise interactively ask for information to train a new model on execution.
 
-The following arguments are required and can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
+The following arguments are required and determine which files will be extracted from the source directory to use during testing. They can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
 * --languages (-lg):	Thai | English | Thai English
 * --dpis (-dpi): 	200 | 300 | 400 | ...
 * --fonts (-ft):	normal | bold | italic | italic_bold | ...
@@ -127,8 +127,41 @@ F1-score performance below 0.5:
 อ้ไ(ติด)    0.076923
 อ์ไ(ติด)    0.210526
 Name: F1-score, dtype: float64
+
+
+### Other
+
+
+? For training on en, 200, normal to 300 -> performance on w/W increased dramatically
+Only underperforming classes are I, I, and l (to be expected)
+Overall accuracy: 0.87
+
+Precision performance below 0.5:
+i    0.250000
+I    0.466667
+l    0.278689
+Name: Precision, dtype: float64
+
+Recall performance below 0.5:
+i    0.390244
+I    0.264151
+l    0.386364
+Name: Recall, dtype: float64
+
+F1-score performance below 0.5:
+i    0.304762
+I    0.337349
+l    0.323810
+
 ___
 
 ## Challenges:
 
-On testing thai200normal, a new model would usually hover around 0.8 overall accuracy but sometimes?? Drop down to 0.01???
+? size_to, resizing images to work for any dpi combination; make accessible in testing, without looking at training data again
+
+? Some struggles with resizing tensors to allow for both batched input, as well as single images during testing
+
+? Fixing the txt file from source directory, for correct label extraction/encoding/decoding
+
+? On testing thai200normal, a new model would usually hover around 0.8 overall accuracy but sometimes?? Drop down to 0.01???
+
