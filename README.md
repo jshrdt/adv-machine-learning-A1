@@ -1,5 +1,11 @@
 # adv-machine-learning-A1
 
+#### Required modules
+
+* argparse, numpy, os, pandas, PIL, random, sklearn.metrics, sklearn.preprocessing, torch, tqdm
+
+___
+
 ## Quickstart
 
 ### Running train_ML2A1.py:
@@ -128,9 +134,36 @@ F1-score performance below 0.5:
 อ์ไ(ติด)    0.210526
 Name: F1-score, dtype: float64
 
+2) Thai normal 400 -> Thai normal 200
+
+Overall accuracy: 0.76
+
+Performance across all classes
+Precision    0.7674
+Recall       0.7572
+F1-score     0.7390
+
+3) Thai normal 400 - Thai bold 400
+
+Overall accuracy: 0.77
+
+Performance across all classes
+Precision    0.7666
+Recall       0.7537
+F1-score     0.7412
+
+4) Thai bold - Thai normal
+Evaluation
+
+Overall accuracy: 0.75
+
+Performance across all classes
+Precision    0.7695
+Recall       0.7475
+F1-score     0.7360
+___
 
 ### Other
-
 
 ? For training on en, 200, normal to 300 -> performance on w/W increased dramatically
 Only underperforming classes are I, I, and l (to be expected)
@@ -162,6 +195,8 @@ ___
 ? Some struggles with resizing tensors to allow for both batched input, as well as single images during testing
 
 ? Fixing the txt file from source directory, for correct label extraction/encoding/decoding
+
+? Too many open files problem (open img -> get sizes -> resize ; vs open img+get sizes -> open images+resize) as PIL only closes images when img data is used
 
 ? On testing thai200normal, a new model would usually hover around 0.8 overall accuracy but sometimes?? Drop down to 0.01???
 

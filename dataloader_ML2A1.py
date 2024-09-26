@@ -8,25 +8,6 @@ import torch
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
     
-def get_ids(src_dir):
-    # get id2char mapping, files are identical across languages
-    # always get all info from txt file, in second step filter according to train specs
-    for root, dirs, files in os.walk(src_dir+'English'+'/'):
-        with open(root+files[0], 'rb') as f:
-            legend = f.read().strip().decode(encoding='cp874',
-                                            errors='backslashreplace')  #fine for this assignments, since non alpha shoudl b ignored
-            
-            id2char = {(item.split()[0] if (int(item.split()[0]) < 111 
-                                                 or int(item.split()[0]) >= 123)
-                        else str(int(item.split()[0])+1)
-                        ): item.split()[1]
-                       for item in legend.split('\n')}
-            # manually add characters contained in data but missing from txt file 
-            id2char['111'] = 'o'
-            id2char['195'] = 'ร'
-    
-            return id2char
-
 class DataLoader:
     def __init__(self, src_dir, data_specs, device, size_to=None):
         self.device = device
@@ -37,7 +18,7 @@ class DataLoader:
         self.train, self.dev, self.test, self.avg_size = output
         self.n_classes = len(set(self.train['labels']))
         
-        self.filenr2char = get_ids(src_dir)  # filenr 2 char
+        self.filenr2char = self._get_ids(src_dir)  # filenr 2 char
              
     def idx_to_char(self, idx):
         # idx -> reverse transform (to filenr) -> filenr2char
@@ -47,7 +28,6 @@ class DataLoader:
         return len(self.raw_data)
                 
     def _read_data(self, src_dir, specs):
-        print('Selecting files...')
         # extract relevant filenames, limited by: lg(var) + charID(all) + dpi(1) + font(1/all) -> get all
         fileinfo = list()
         for root, dirs, files in os.walk(src_dir):
@@ -72,21 +52,22 @@ class DataLoader:
     def _transform_data(self, data_list, size_to=None):
         print('Transforming data...')        
         # extract and transform images
-        raw_imgs = [Image.open(item[0]) for item in data_list]
+        
+        # takes longer, as images have to be opened twice, but avoids too many
+        # open files at one    
+        sizes = [Image.open(item[0]).size for item in data_list]
         
         # find avg size of train files to decide what model should resize input to
         if size_to:
             avg_size = size_to
         else:
-            avg_size = (round(sum([img.size[0] for img in raw_imgs])
-                              / len(raw_imgs)),
-                        round(sum([img.size[1] for img in raw_imgs])
-                              / len(raw_imgs)))
-        # resize images to avg size, recode image pixels from True/False to 1/0
+            avg_size = (round(sum([size[0] for size in sizes]) / len(sizes)),
+                        round(sum([size[1] for size in sizes]) / len(sizes)))
+        # resize images to avg size, recode image pixels from True/False to 1/0,
         # then transform to matrix of np arrays
         np_imgs = np.array([np.array([[0 if dot else 1 for dot in line] for line
-                                      in np.array(img.resize((avg_size)))])
-                            for img in raw_imgs])
+                                      in self._resize_img(item, avg_size)])
+                            for item in data_list])
         # rescale each value to be between 0, 1.
         imgs = self._scale_imgs(np_imgs)
 
@@ -111,6 +92,9 @@ class DataLoader:
         
         return train_data, dev_data, test_data, avg_size
     
+    def _resize_img(self, item, avg_size):
+        return np.array(Image.open(item[0]).resize((avg_size)))    
+    
     def _scale_imgs(self, imgs):
         size = imgs.shape
         scaled_imgs = torch.tensor(StandardScaler().fit_transform(
@@ -118,6 +102,25 @@ class DataLoader:
                         ).reshape(size)
                                    ).float().to(self.device)
         return scaled_imgs
+    
+    def _get_ids(self, src_dir):
+        # get id2char mapping, files are identical across languages
+        # always get all info from txt file, in second step filter according to train specs
+        for root, dirs, files in os.walk(src_dir+'English'+'/'):
+            with open(root+files[0], 'rb') as f:
+                legend = f.read().strip().decode(encoding='cp874',
+                                                errors='backslashreplace')  #fine for this assignments, since non alpha shoudl b ignored
+                
+                id2char = {(item.split()[0] if (int(item.split()[0]) < 111
+                                                or int(item.split()[0]) >= 123)
+                            else str(int(item.split()[0])+1)
+                            ): item.split()[1]
+                        for item in legend.split('\n')}
+                # manually add characters contained in data but missing from txt file 
+                id2char['111'] = 'o'
+                id2char['195'] = 'ร'
+        
+                return id2char
 
 
 class MyBatcher:

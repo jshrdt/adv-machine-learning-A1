@@ -6,7 +6,8 @@ import pandas as pd
 from dataloader_ML2A1 import *
 from train_ML2A1 import *
 
-parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser(formatter_class=
+                                 argparse.ArgumentDefaultsHelpFormatter)
 # must have
 parser.add_argument('-lg', '--languages', nargs='+', required=True,
                     help='Languages to train on. English | Thai')
@@ -26,7 +27,7 @@ parser.add_argument('-srcd', '--source_dir',
 
 
 ## testing ##
-def test(data, model, verbose=False):    
+def test(data, model, verbose=False):
     model.eval()
     X = data.test['imgs']
     y_true = [data.idx_to_char(label) for label in data.test['labels']]
@@ -79,16 +80,19 @@ def get_alt_train_specs():
           +'or combination (e.g. 1 -> English; 12 -> English+Thai).')
     
     # lg_idx = input(f'Train on which languages?\n{lg_read}\n')
-    lg = [lg_read[idx] for idx in input(f'Train on which languages?\n{lg_read}\n')]
+    lg = [lg_read[idx] for idx 
+          in input(f'Train on which languages?\n{lg_read}\n')]
     
     #dpi_idx = input(f'Train on which resolution?\n{dpi_read}\n')
-    dpi = [dpi_read[idx] for idx in input(f'Train on which resolution?\n{dpi_read}\n')]
+    dpi = [dpi_read[idx] for idx 
+           in input(f'Train on which resolution?\n{dpi_read}\n')]
     
     #ft_idx = input(f'Train on which fonts?\n{ft_read}\n')
-    ft = [ft_read[idx] for idx in input(f'Train on which fonts?\n{ft_read}\n')]
+    ft = [ft_read[idx] for idx 
+          in input(f'Train on which fonts?\n{ft_read}\n')]
     
     specs = {'languages': lg, 'dpis': dpi, 'fonts': ft}
-
+    
     return specs
         
 if __name__=="__main__":
@@ -128,5 +132,6 @@ if __name__=="__main__":
             print('Test script exited.')
 
     ## testing ##
+    print('Selecting files for testing:', specs)
     test_data = DataLoader(src_dir, specs, device, size_to=m.img_dims)
     test(test_data, m, verbose=args.verbose)

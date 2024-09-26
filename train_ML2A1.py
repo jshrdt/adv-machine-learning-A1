@@ -99,6 +99,7 @@ def train(data, device, epochs, batch_size):
 
 def init_train(src_dir, specs, device, eps=5, b_s=32, savefile=None):
     # Read data & process data accordings to specs from source directory
+    print('Selecting files for training:', specs)
     data = DataLoader(src_dir, specs, device)
 
     # Train model
