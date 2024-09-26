@@ -13,8 +13,8 @@
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -ld Thai200normal_model
 
 (2) Train & test new model, optional: save to file.
-* $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal
-> No pre-trained model found, train new model?  
+> $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal
+>> No pre-trained model found, train new model?  
 >> (y/n) y  
 >> Train new model on same specifications as test data?  
 >> {'languages': ['Thai'], 'dpis': ['200'], 'fonts': ['normal']}  
@@ -26,39 +26,50 @@ ___
 
 ## Detailed overview
 
-### Training with train_ML2A1.py
+### Training a model with train_ML2A1.py
 
-To train a new model, call the train script and specify what data to use from the training repository. This file also contains the NN model architecture.  
+To train a new model, run the train script and specify what data to use from the training repository. This file also contains the NN model architecture.
+
 The following arguments are required and can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
 * --languages (-lg):	Thai | English | Thai English
 * --dpis (-dpi): 	200 | 300 | 400 | ...
 * --fonts (-ft):	normal | bold | italic | italic_bold | ...
 
-The following arguments are optional. The first two alter behaviour during the training loop. --Savefile allows the trained model to be saved under the passed filename/path. The final argument may be used to specify a different directory to read the source data from.
+The following arguments are optional. The first two alter behaviour during the training loop. --savefile allows the trained model to be saved under the passed filename/path. The final argument may be used to specify a different directory to read the source data from.
 * --epochs (-ep):	any integer, defaults to 5
 * --batch_size (-bs):	any integer, defaults to 32
 * --savefile (-s)	any filename/path, defaults to None
 * --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
 
+> python3 train_ML2A1.py -lg Thai English -dpi 200 300 -ft italic -ep 8 -bs 64 -s ThaiEn_200300_ita_custom -srcd [custom/path/to/OCR/data]
 
-## Testing with test_ML2A1.py
 
-To test a model, call the test script and specify what data to test it on. The script can either test a pretrained model (passed with --load), or will otherwise interactively ask for information to train a new model on execution.  
+### Testing a model with test_ML2A1.py
+
+To test a model, run the test script and specify what data to test on. The script can either test a pre-trained model (passed with --load), or will otherwise interactively ask for information to train a new model on execution.
+
 The following arguments are required and can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
 * --languages (-lg):	Thai | English | Thai English
 * --dpis (-dpi): 	200 | 300 | 400 | ...
 * --fonts (-ft):	normal | bold | italic | italic_bold | ...
 
-The following arguments are optional. --load specifies where to find the pretrained model, if left unspecified/invalid, a new model may be trained with the train script. --verbose determines the amount of detail printed during model evaluation. The final argument may be used to specify a different directory to read the source data from.
+The following arguments are optional. --load specifies where to find the pre-trained model, if invalid/left unspecified, the test script allows the user to specify information to train a new model using the train script. --verbose increases the amount of detail printed during model evaluation. The final argument may be used to specify a different directory to read the source data from.
 * --load (-ld):		any filename/path, defaults to None
 * --verbose (-v):	on/off flag
 * --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
 
+> $ python3-s test_ML2A1.py --lg Thai -dpi 400 -ft bold -ld ThaiEn_200300_ita_custom -v -srcd [custom/path/to/OCR/data]
+
 ## Dataloader
 
-TODO
+Contains DataLoader class for OCR data, used to load image from source directory data for both training and testing, as well as the MyBatcher class for batching of data during training. File has no main function.
+
+__
+
+# TODO
 
 ## experiments
+
 1)
 python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -v
 Evaluation
