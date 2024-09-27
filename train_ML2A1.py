@@ -107,7 +107,7 @@ def train(data: DataLoader, device: torch.device, epochs: int,
             # Make predictions on batched data.
             pred = (model(batch[0], mode='train')).double()
             # Get gold labels.
-            gold = batch[1].to(device)
+            gold = batch[1]
             # Calculate + log loss, backpropagate, and update gradient.
             loss = loss_func(pred, gold)
             total_loss += loss

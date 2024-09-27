@@ -1,4 +1,5 @@
 ### testing script ###
+print('Compiling...')
 import argparse
 from sklearn.metrics import (precision_score, recall_score, f1_score,
                              accuracy_score)
@@ -93,7 +94,7 @@ def test(data: DataLoader, model: CNN, device: torch.device) -> tuple[list, list
     # Make predictions & extract gold labels. Both converted to single character.
     print('Testing model...')
     X = test_data['imgs']
-    y_true = [data.idx_to_char(label) for label in test_data['labels']]
+    y_true = [data.idx_to_char(label.cpu()) for label in test_data['labels']]
     y_preds = [model(X[i].reshape(1, X[i].shape[0], X[i].shape[1]))
                for i in range(len(X))]
         
@@ -113,29 +114,28 @@ def evaluate(y_preds: list, y_true: list, verbose: bool=False):
     # Sort measures into df, calculate macros.
     measures = ['Precision', 'Recall', 'F1-score']
     evals = pd.DataFrame((precision, recall, f1), index=measures, 
-                         columns=pred_labels)
-    evals['MACROS'] = [round(sum(vals)/len(vals), 4)
-                       for vals in (precision, recall, f1)]
-    
+                         columns=pred_labels).transpose()    
     # Print evaluation.
     print('-'*80)
     print('Evaluation')
     print('\nOverall accuracy:', round(accuracy, 2))
+
     if verbose:
         # Details on per-class measures.
-        print('\nPer-class measures')
-        print(evals.transpose().round(2))
-        print('-'*80)
-        df = evals.transpose()
-        # Detail on worst performing classes per measure. 
+        print('\nOverview of per-class measures')
+        print('\n', evals.describe().iloc[1:])
+        
+        # Sort by values for each performance, print top/bottom 5.
+        print('\nOverview of 5 best/worst performing classes per measure.')
         for measure in measures:
-            perc25 = round(df.describe().loc['25%'].loc[measure], 4) 
-            min_val = perc25 if perc25 < 0.6 else 0.6
-            print(f'\n{measure} score below {min_val}:')
-            print(df[df[measure] < min_val][measure])
+            print('\nTop', measure)
+            print(evals[measure].sort_values(ascending=False)[:5].round(2))
+            print('\nBottom', measure)
+            print(evals[measure].sort_values()[:5].round(2))
+            
     else:
         print('\nPerformance across all classes')
-        print(evals['MACROS'])
+        print(evals.describe().loc['mean'])
         
 if __name__=="__main__":
     # Set device and default source directory.
