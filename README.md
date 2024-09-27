@@ -203,3 +203,6 @@ ___
 
 ? On testing thai200normal, a new model would usually hover around 0.8 overall accuracy but sometimes?? Drop down to 0.01???
 
+? Inconsistent torch behaviour: https://github.com/pytorch/pytorch/issues/51112 solved : .reset_index(drop=True)
+
+? Restructuring: open files twice, but transform only those when needed

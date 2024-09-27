@@ -66,12 +66,26 @@ class CNN(nn.Module):
             # Return predicted character.
             return self.idx_to_char(int(preds.argmax()))
         
+def batch_data(data, batch_size):
+    """Shuffle training data again (unseeded) and create batches."""
+    # Shuffle data.
+    permutation = torch.randperm(data['imgs'].size()[0])
+    permX = data['imgs'][permutation]
+    permy = data['labels'][permutation]
+    # Extract batches.
+    batches = [(permX[i*batch_size:(i+1)*batch_size],
+                permy[i*batch_size:(i+1)*batch_size])
+            for i in range(int(data['imgs'].size()[0]/batch_size))]
+
+    return batches
+        
 def train(data: DataLoader, device: torch.device, epochs: int, batch_size: int):
     """Train and return a CNN model."""
     # Transform & batch training data.
-    print('Transforming & batching data...')        
+    print('Transforming data...')        
     train_data = OCRData(data.train, device, size_to=data.avg_size).transformed
-    train_batches = MyBatcher(train_data, batch_size).batches
+    print('Batching data...')
+    train_batches = batch_data(train_data, batch_size)
 
     # Batch training data, initialise model, optimizer, and loss function.
     model = CNN(data.n_classes, data.avg_size, data.idx_to_char).to(device)
