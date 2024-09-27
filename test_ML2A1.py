@@ -1,11 +1,9 @@
 ### testing script ###
 print('Compiling...')
-import argparse
+# Imports
 from sklearn.metrics import (precision_score, recall_score, f1_score,
                              accuracy_score)
 import pandas as pd
-
-from dataloader_ML2A1 import *
 from train_ML2A1 import *
 
 # Initialise argument parser and define command line arguments.
@@ -33,7 +31,7 @@ def get_model(loadfile: str, test_specs: dict) -> CNN:
     # Load model, get test data according to specs.
     if loadfile:
         print('Loading model from: ', loadfile)
-        m = torch.load(args.load, weights_only=False)
+        m = torch.load(loadfile, weights_only=False)
     # Get info to train new model.
     else:
         print('-'*80)
@@ -95,8 +93,9 @@ def test(data: DataLoader, model: CNN, device: torch.device) -> tuple[list, list
     print('Testing model...')
     X = test_data['imgs']
     y_true = [data.idx_to_char(label.cpu()) for label in test_data['labels']]
-    y_preds = [model(X[i].reshape(1, X[i].shape[0], X[i].shape[1]))
-               for i in range(len(X))]
+    y_preds = list()
+    for i in tqdm(range(len(X))):
+        y_preds.append(model(X[i].reshape(1, X[i].shape[0], X[i].shape[1])))
         
     return y_preds, y_true
 
@@ -122,19 +121,17 @@ def evaluate(y_preds: list, y_true: list, verbose: bool=False):
 
     if verbose:
         # Details on per-class measures.
-        print('\nOverview of per-class measures')
-        print('\n', evals.describe().iloc[1:])
+        print('\nOverview of measures across classes:\n')
+        print(evals.describe().round(2).iloc[1:])
         
-        # Sort by values for each performance, print top/bottom 5.
-        print('\nOverview of 5 best/worst performing classes per measure.')
+        print('\nOverview of 5 worst performing classes per measure:')
         for measure in measures:
-            print('\nTop', measure)
-            print(evals[measure].sort_values(ascending=False)[:5].round(2))
-            print('\nBottom', measure)
+            print()
+            print(measure)
             print(evals[measure].sort_values()[:5].round(2))
-            
+                        
     else:
-        print('\nPerformance across all classes')
+        print('\nMean performances across all classes:\n')
         print(evals.describe().loc['mean'])
         
 if __name__=="__main__":

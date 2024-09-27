@@ -132,7 +132,7 @@ def init_train(src_dir: str, specs: dict, device: torch.device, epochs: int=5,
     # Save model to file.
     if savefile:
         torch.save(m, savefile)
-        print('Model saved to ', savefile)
+        print('Model saved to', savefile)
     
     return m
 

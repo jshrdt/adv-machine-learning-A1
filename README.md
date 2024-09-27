@@ -22,17 +22,14 @@ ___
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal  
 
 > No pre-trained model found, train new model?  
-> (y/n) 
->> y  
+> (y/n) >> y  
 
 > Train new model on same specifications as test data?  
 > {'languages': ['Thai'], 'dpis': ['200'], 'fonts': ['normal']}  
-> (y/n) 
->> y  
+> (y/n) >> y  
 
 > Keep default params for epochs(5)/batch_size(32)/savefile(None)?  
-> (y/n)
->> y  
+> (y/n) >> y  
 
 ___
 
@@ -56,7 +53,6 @@ The following arguments are optional. The first two alter behaviour during the t
 > $ python3 train_ML2A1.py -lg Thai English -dpi 200 300 -ft italic -ep 8 -bs 64 -s ThaiEn_200300_ita_custom -srcd [custom/path/to/OCR/data]
 
 
-
 ### Testing a model with test_ML2A1.py
 
 To test a model, run the test script and specify what data to test on. The script can either test a pre-trained model (passed with --loadfile), or will otherwise interactively ask for information to train a new model on execution.
@@ -73,502 +69,327 @@ The following arguments are optional. --loadfile specifies where to find the pre
 
 > $ python3-s test_ML2A1.py -lg Thai -dpi 400 -ft bold -ld ThaiEn_200300_ita_custom -v -srcd [custom/path/to/OCR/data]
 
-## Dataloader
+### Dataloader
 
-Contains DataLoader class for OCR data, used to load image from source directory data for both training and testing, as well as the MyBatcher class for batching of data during training. File has no main function.
+Contains DataLoader and OCRData classes, used to filter relevant files from source directory and transform to required format for both training and testing. File has no main function.
 
 ___
 
-# TODO
-
 ## Experiments
 
-1) Thai normal text, 200dpi - Thai normal text, 200dpi
+1) Thai normal text, 200dpi -> Thai normal text, 200dpi
 
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -v  
+--------------------------------------------------------------------------------
 Evaluation
 
-Overall accuracy: 0.88
+Overall accuracy: 0.9
 
-Overview of per-class measures
+Overview of measures across classes:
 
-       Precision    Recall  F1-score
-mean   0.889251  0.879119  0.868755
-std    0.143038  0.155446  0.128142
-min    0.285714  0.357143  0.444444
-25%    0.833333  0.850000  0.800000
-50%    0.941176  0.928571  0.914286
-75%    1.000000  1.000000  0.965517
-max    1.000000  1.000000  1.000000
+      Precision  Recall  F1-score  
+mean       0.91    0.90      0.90  
+std        0.12    0.13      0.10  
+min        0.54    0.47      0.62  
+25%        0.86    0.88      0.85  
+50%        0.94    0.95      0.94  
+75%        1.00    1.00      0.97  
+max        1.00    1.00      1.00  
 
-Overview of 5 best/worst performing classes per measure.
+Overview of 5 worst performing classes per measure:
 
-Top Precision
-ศื(ติด)    1.0
-ป          1.0
-ษ          1.0
-ย          1.0
-ก          1.0
-Name: Precision, dtype: float64
+Precision  
+ซ       0.54  
+อ์ใ(ติด)  0.55  
+ๅ       0.56  
+อึ้(ติด)   0.58  
+อ้       0.67  
 
-Bottom Precision
-สี(ติด)     0.29
-ซ           0.41
-อ์โ(ติด)    0.48
-อ็ไ(ติด)    0.57
-ส           0.58
-Name: Precision, dtype: float64
+Recall  
+อ์ไ(ติด)  0.47  
+อ้ไ(ติด)  0.50  
+ฃ       0.52  
+ช       0.57  
+ศื(ติด)   0.60  
 
-Top Recall
-ฝั(ติด)    1.0
-ฟั(ติด)    1.0
-ษ          1.0
-ศื(ติด)    1.0
-ม          1.0
-Name: Recall, dtype: float64
 
-Bottom Recall
-อึ้(ติด)    0.36
-ช           0.43
-ฃ           0.43
-ส้(ติด)     0.50
-ฏ           0.50
-Name: Recall, dtype: float64
+F1-score  
+ๅ        0.62  
+อ์ไ(ติด)   0.64  
+อ้ไ(ติด)   0.65  
+ฃ        0.65  
+อึ้(ติด)    0.67  
 
-Top F1-score
-ศื(ติด)    1.0
-ฑ          1.0
-ษ          1.0
-ย          1.0
-ศั(ติด)    1.0
-Name: F1-score, dtype: float64
-
-Bottom F1-score
-สี(ติด)     0.44
-อึ้(ติด)    0.53
-ฃ           0.58
-ฏ           0.58
-ซ           0.59
-Name: F1-score, dtype: float64
 ___
 
 2) Thai normal 400 -> Thai normal 200
 
+> $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -v
+
 --------------------------------------------------------------------------------
 Evaluation
 
-Overall accuracy: 0.89
+Overall accuracy: 0.86
 
-Overview of per-class measures
+Overview of measures across classes:
 
-       Precision    Recall  F1-score
-mean   0.891072  0.882895  0.875839
-std    0.120250  0.138983  0.112729
-min    0.400000  0.200000  0.333333
-25%    0.833333  0.818182  0.833333
-50%    0.928571  0.928571  0.900000
-75%    1.000000  1.000000  0.958333
-max    1.000000  1.000000  1.000000
+      Precision  Recall  F1-score  
+mean       0.86    0.84      0.84  
+std        0.17    0.18      0.15  
+min        0.00    0.00      0.00  
+25%        0.77    0.79      0.74  
+50%        0.92    0.90      0.89  
+75%        1.00    0.96      0.94  
+max        1.00    1.00      1.00  
 
-Overview of 5 best/worst performing classes per measure.
+Overview of 5 worst performing classes per measure:
 
-Top Precision
-ศั(ติด)     1.0
-ผ           1.0
-สิ(ติด)     1.0
-ห           1.0
-อ์ไ(ติด)    1.0
-Name: Precision, dtype: float64
+Precision  
+ศื(ติด)    0.00  
+อ่         0.46  
+ด          0.48  
+สี(ติด)    0.50  
+ต          0.50  
 
-Bottom Precision
-สี(ติด)    0.40
-อู         0.57
-ฏ          0.59
-อี         0.62
-ป้(ติด)    0.64
-Name: Precision, dtype: float64
+Recall  
+ศื(ติด)     0.00  
+อี้(ติด)    0.33  
+ศี(ติด)     0.38  
+สื(ติด)     0.43  
+า           0.46  
 
-Top Recall
-ศั(ติด)     1.0
-อ์          1.0
-สิ(ติด)     1.0
-อ็ไ(ติด)    1.0
-ฤ           1.0
-Name: Recall, dtype: float64
-
-Bottom Recall
-ศื(ติด)    0.20
-ๅ          0.40
-อื         0.54
-ฎ          0.60
-ฃ          0.62
-Name: Recall, dtype: float64
-
-Top F1-score
-ศั(ติด)    1.0
-สิ(ติด)    1.0
-ป็(ติด)    1.0
-ฉ          1.0
-ถ          1.0
-Name: F1-score, dtype: float64
-
-Bottom F1-score
-ศื(ติด)    0.33
-ๅ          0.53
-สี(ติด)    0.57
-ฏ          0.65
-อู         0.69
-Name: F1-score, dtype: float64
+F1-score  
+ศื(ติด)     0.00  
+อี้(ติด)    0.47  
+ช           0.54  
+ศี(ติด)     0.55  
+สื(ติด)     0.55  
 
 ___
 
-
 3) Thai normal 400 - Thai bold 400
+
+> $ python3 test_ML2A1.py -lg Thai -dpi 400 -ft bold -v
 
 --------------------------------------------------------------------------------
 Evaluation
 
-Overall accuracy: 0.89
+Overall accuracy: 0.84
 
-Overview of per-class measures
+Overview of measures across classes:
 
-       Precision    Recall  F1-score
-mean   0.889282  0.869996  0.865172
-std    0.153575  0.184635  0.150033
-min    0.000000  0.000000  0.000000
-25%    0.814815  0.833333  0.814815
-50%    0.941176  0.941176  0.888889
-75%    1.000000  1.000000  0.967742
-max    1.000000  1.000000  1.000000
+      Precision  Recall  F1-score  
+mean       0.86    0.83      0.82  
+std        0.18    0.18      0.17  
+min        0.18    0.22      0.29  
+25%        0.79    0.75      0.73  
+50%        0.93    0.89      0.88  
+75%        1.00    0.95      0.95  
+max        1.00    1.00      1.00  
 
-Overview of 5 best/worst performing classes per measure.
+Overview of 5 worst performing classes per measure:
 
-Top Precision
-ฅ          1.0
-ป          1.0
-อ๋         1.0
-ช          1.0
-ป็(ติด)    1.0
-Name: Precision, dtype: float64
+Precision  
+ส้(ติด)     0.18  
+ป้(ติด)     0.29  
+อึ้(ติด)    0.34  
+ด           0.37  
+ต           0.42  
 
-Bottom Precision
-ศี(ติด)     0.00
-ต           0.55
-ศื(ติด)     0.57
-อึ้(ติด)    0.57
-สื(ติด)     0.60
-Name: Precision, dtype: float64
+Recall  
+สี(ติด)     0.22  
+ศื(ติด)     0.22  
+อี้(ติด)    0.33  
+ศั(ติด)     0.33  
+ช           0.44  
 
-Top Recall
-ก           1.0
-อ็          1.0
-ป           1.0
-อ๋          1.0
-อ์ไ(ติด)    1.0
-Name: Recall, dtype: float64
-
-Bottom Recall
-ศี(ติด)    0.00
-ป้(ติด)    0.33
-ศั(ติด)    0.33
-สี(ติด)    0.33
-ฝ้(ติด)    0.48
-Name: Recall, dtype: float64
-
-Top F1-score
-ป         1.0
-ฑ         1.0
-อ๋        1.0
-ฐ(ติด)    1.0
-น         1.0
-Name: F1-score, dtype: float64
-
-Bottom F1-score
-ศี(ติด)     0.00
-ป้(ติด)     0.50
-ศั(ติด)     0.50
-สี(ติด)     0.50
-อึ้(ติด)    0.57
-Name: F1-score, dtype: float64
-
+F1-score  
+ส้(ติด)     0.29  
+สี(ติด)     0.36  
+ศื(ติด)     0.36  
+ป้(ติด)     0.40  
+อึ้(ติด)    0.47  
 
 ___
 
 4) Thai bold -> Thai normal
 
-Evaluation
-
-Overall accuracy: 0.83
-
-Overview of per-class measures
-
-       Precision    Recall  F1-score
-mean   0.841818  0.819553  0.821671
-std    0.125316  0.137928  0.111830
-min    0.531250  0.337838  0.433121
-25%    0.741573  0.764706  0.748387
-50%    0.881188  0.867647  0.857143
-75%    0.937500  0.920000  0.910053
-max    1.000000  0.988889  0.974684
-
-Overview of 5 best/worst performing classes per measure.
-
-Top Precision
-ฉ          1.0
-ฒ          1.0
-อ๊         1.0
-อิ         1.0
-สื(ติด)    1.0
-Name: Precision, dtype: float64
-
-Bottom Precision
-ฏ    0.53
-ฃ    0.59
-า    0.59
-ข    0.60
-ฎ    0.61
-Name: Precision, dtype: float64
-
-Top Recall
-ง          0.99
-ฟ          0.99
-สั(ติด)    0.99
-ม          0.96
-ศ          0.95
-Name: Recall, dtype: float64
-
-Bottom Recall
-อี่(ติด)    0.34
-ฏ           0.37
-ส้(ติด)     0.47
-ซ           0.49
-สื(ติด)     0.51
-Name: Recall, dtype: float64
-
-Top F1-score
-เ     0.97
-ฒ     0.97
-อ๋    0.96
-ผ     0.95
-พ     0.95
-Name: F1-score, dtype: float64
-
-Bottom F1-score
-ฏ           0.43
-อี่(ติด)    0.50
-ข           0.58
-า           0.59
-ศื(ติด)     0.61
-Name: F1-score, dtype: float64
-
-
-5) All Thai -> All Thai
+> $ python3 test_ML2A1.py -lg Thai -dpi 200 300 400 -ft normal -v
 
 --------------------------------------------------------------------------------
 Evaluation
 
-Overall accuracy: 0.96
+Overall accuracy: 0.85
 
-Overview of per-class measures
+Overview of measures across classes:
 
-       Precision    Recall  F1-score
-mean   0.961004  0.959113  0.958155
-std    0.054127  0.063133  0.050617
-min    0.667742  0.491304  0.653179
-25%    0.956000  0.952381  0.951456
-50%    0.976834  0.975309  0.971209
-75%    0.991736  0.990119  0.986900
-max    1.000000  1.000000  0.998088
+      Precision  Recall  F1-score  
+mean       0.86    0.84      0.84  
+std        0.12    0.15      0.11  
+min        0.57    0.12      0.22  
+25%        0.79    0.77      0.78  
+50%        0.89    0.89      0.86  
+75%        0.95    0.96      0.91  
+max        1.00    1.00      1.00  
 
-Overview of 5 best/worst performing classes per measure.
+Overview of 5 worst performing classes per measure:
 
-Top Precision
-ณ          1.0
-ปั(ติด)    1.0
-ป็(ติด)    1.0
-ฬ          1.0
-ส          1.0
-Name: Precision, dtype: float64
+Precision  
+า           0.57  
+ฟั(ติด)     0.58  
+อี้(ติด)    0.60  
+อึ้(ติด)    0.60  
+ฃ           0.63  
 
-Bottom Precision
-อึ้(ติด)    0.67
-ๅ           0.69
-อื          0.82
-อี่(ติด)    0.83
-ฟ้(ติด)     0.85
-Name: Precision, dtype: float64
+Recall  
+ส้(ติด)     0.12  
+ป้(ติด)     0.46  
+อี          0.55  
+ๅ           0.56  
+อึ่(ติด)    0.56  
 
-Top Recall
-ผ          1.0
-ฝ้(ติด)    1.0
-พ          1.0
-สิ(ติด)    1.0
-ศั(ติด)    1.0
-Name: Recall, dtype: float64
+F1-score  
+ส้(ติด)     0.22  
+ป้(ติด)     0.61  
+อึ้(ติด)    0.64  
+ฃ           0.65  
+อี          0.66  
 
-Bottom Recall
-า           0.49
-อึ่(ติด)    0.75
-อี้(ติด)    0.79
-ฟั(ติด)     0.86
-อึ          0.86
-Name: Recall, dtype: float64
+___
 
-Top F1-score
-ส         1.0
-ง         1.0
-ผ         1.0
-ม         1.0
-ญ(ติด)    1.0
-Name: F1-score, dtype: float64
+5) All Thai -> All Thai
 
-Bottom F1-score
-า           0.65
-อึ้(ติด)    0.79
-ๅ           0.81
-อี้(ติด)    0.83
-อึ่(ติด)    0.84
-Name: F1-score, dtype: float64
+> $ python3 test_ML2A1.py -lg Thai -dpi 200 300 400 -ft normal bold italic italic_bold -v
 
-
-
-
-6) Thai & en normal -> Thai & en normal
-
+--------------------------------------------------------------------------------
 Evaluation
 
 Overall accuracy: 0.95
 
-Overview of per-class measures
+Overview of measures across classes:
 
-       Precision    Recall  F1-score
-mean   0.954209  0.950250  0.949650
-std    0.081460  0.092199  0.084805
-min    0.384615  0.311688  0.457143
-25%    0.950000  0.949367  0.935673
-50%    0.985915  0.985714  0.982036
-75%    1.000000  1.000000  0.993377
-max    1.000000  1.000000  1.000000
+      Precision  Recall  F1-score  
+mean       0.95    0.95      0.95  
+std        0.06    0.05      0.04  
+min        0.72    0.71      0.78  
+25%        0.94    0.93      0.93  
+50%        0.98    0.97      0.97  
+75%        0.99    0.99      0.98  
+max        1.00    1.00      1.00  
 
-Overview of 5 best/worst performing classes per measure.
+Overview of 5 worst performing classes per measure:
 
-Top Precision
-Y          1.0
-สิ(ติด)    1.0
-g          1.0
-ส          1.0
-ซ          1.0
-Name: Precision, dtype: float64
+Precision  
+า           0.72  
+อ่          0.75  
+อ้ใ(ติด)    0.82  
+ฏ           0.82  
+อุ          0.83  
 
-Bottom Precision
-อ่    0.38
-I     0.57
-i     0.71
-า     0.73
-V     0.74
-Name: Precision, dtype: float64
+Recall  
+ๅ     0.71  
+ฎ     0.78  
+อึ    0.83  
+ด     0.83  
+อื    0.84  
 
-Top Recall
-Y          1.0
-R          1.0
-ฟั(ติด)    1.0
-สิ(ติด)    1.0
-ญ(ติด)     1.0
-Name: Recall, dtype: float64
+F1-score  
+ๅ           0.78  
+า           0.80  
+อ่          0.80  
+อึ้(ติด)    0.87  
+อี          0.87  
 
-Bottom Recall
-l    0.31
-i    0.48
-I    0.58
-.    0.66
-v    0.74
-Name: Recall, dtype: float64
+___
 
-Top F1-score
-Y          1.0
-สิ(ติด)    1.0
-Z          1.0
-r          1.0
-ศั(ติด)    1.0
-Name: F1-score, dtype: float64
+6) Thai & en normal -> Thai & en normal
 
-Bottom F1-score
-l     0.46
-อ่    0.53
-I     0.58
-i     0.58
-.     0.71
-Name: F1-score, dtype: float64
+> $ python3 test_ML2A1.py -lg English Thai -dpi 200 300 400 -ft normal -v
 
-
-
-7) All styles -> All styles
 --------------------------------------------------------------------------------
 Evaluation
 
 Overall accuracy: 0.94
 
-Overview of per-class measures
+Overview of measures across classes:
 
-       Precision    Recall  F1-score
-mean   0.942098  0.938176  0.937964
-std    0.096064  0.101215  0.093534
-min    0.434524  0.507692  0.484245
-25%    0.938503  0.935361  0.934156
-50%    0.980237  0.980952  0.977131
-75%    0.991770  0.991701  0.989648
-max    1.000000  1.000000  1.000000
+      Precision  Recall  F1-score  
+mean       0.95    0.94      0.94  
+std        0.10    0.11      0.10  
+min        0.29    0.31      0.42  
+25%        0.94    0.94      0.94  
+50%        0.98    0.98      0.97  
+75%        1.00    1.00      0.99  
+max        1.00    1.00      1.00  
 
-Overview of 5 best/worst performing classes per measure.
+Overview of 5 worst performing classes per measure:
 
-Top Precision
-L           1.0
-k           1.0
-ฝ           1.0
-ฑ           1.0
-อ้โ(ติด)    1.0
-Name: Precision, dtype: float64
+Precision  
+อ่    0.29  
+l     0.53  
+.     0.59  
+o     0.60  
+I     0.67  
 
-Bottom Precision
-i     0.43
-l     0.46
-อ่    0.52
-o     0.68
-า     0.71
-Name: Precision, dtype: float64
+Recall  
+i    0.31  
+I    0.35  
+l    0.49  
+V    0.57  
+O    0.58  
 
-Top Recall
-k          1.0
-h          1.0
-m          1.0
-ศั(ติด)    1.0
-ผ          1.0
-Name: Recall, dtype: float64
+F1-score  
+อ่    0.42  
+i     0.46  
+I     0.46  
+l     0.51  
+.     0.64  
 
-Bottom Recall
-I     0.51
-i     0.55
-อ่    0.55
-w     0.60
-c     0.65
-Name: Recall, dtype: float64
+___
 
-Top F1-score
-k    1.0
-A    1.0
-Z    1.0
-ฝ    1.0
-N    1.0
-Name: F1-score, dtype: float64
 
-Bottom F1-score
-i     0.48
-อ่    0.53
-l     0.56
-I     0.65
-.     0.70
-Name: F1-score, dtype: float64
+7) All styles -> All styles
 
+> $ python3 test_ML2A1.py -lg English Thai -dpi 200 300 400 -ft normal italic bold italic_bold -v
+
+--------------------------------------------------------------------------------
+Evaluation
+
+Overall accuracy: 0.91
+
+Overview of measures across classes:
+
+      Precision  Recall  F1-score  
+mean       0.92    0.91      0.91  
+std        0.11    0.14      0.12  
+min        0.37    0.21      0.34  
+25%        0.92    0.92      0.90  
+50%        0.97    0.96      0.96  
+75%        0.99    0.99      0.98  
+max        1.00    1.00      1.00  
+
+Overview of 5 worst performing classes per measure:
+
+Precision  
+อ่    0.37  
+i     0.43  
+C     0.55  
+l     0.57  
+o     0.59  
+
+Recall  
+c    0.21  
+l    0.35  
+i    0.45  
+v    0.46  
+O    0.46  
+
+F1-score  
+c     0.34  
+l     0.43  
+i     0.44  
+อ่    0.50  
+v     0.56  
 
 ___
 
