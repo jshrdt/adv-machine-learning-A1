@@ -1,4 +1,5 @@
-## helper funcs
+## helper classes ##
+# Imports
 import os
 import pandas as pd
 from PIL import Image
@@ -9,19 +10,20 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 
 class DataLoader:
-    def __init__(self, src_dir, data_specs):
+    def __init__(self, src_dir: str, data_specs: dict):
         self.le = LabelEncoder()
         self.train, self.dev, self.test = self._read_data(src_dir, data_specs)
         self.avg_size = self._get_avg_size(self.train)
         self.n_classes = len(self.le.classes_)
         self.filenr2char = self._get_mapping(src_dir)
              
-    def idx_to_char(self, idx):
+    def idx_to_char(self, idx: int) -> str:
         """Return Latin/Thai character corresponding to unique label idx."""
         return self.filenr2char[self.le.inverse_transform([idx])[0]]
                 
-    def _read_data(self, src_dir, specs):
-        """Return training, dev, and test data splits of data according to specs.
+    def _read_data(self, src_dir: str,
+                   specs: dict) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """Return training, dev, and test data df splits of data according to specs.
         Fit label encoder and encode file labels.
         """
         fileinfo = list()
@@ -58,7 +60,7 @@ class DataLoader:
         
         return train_data, dev_data, test_data
         
-    def _get_avg_size(self, train_df):
+    def _get_avg_size(self, train_df: pd.DataFrame) -> tuple[int, int]:
         """Find average size of training files to resize input images to."""
         sizes = [Image.open(file).size for file in train_df['files']]
         
@@ -67,7 +69,7 @@ class DataLoader:
         
         return avg_size
     
-    def _get_mapping(self, src_dir):
+    def _get_mapping(self, src_dir: str) -> dict:
         """Return dictionary mapping file labels to EnglishTthai character."""
         # Get mapping information from txt file.
         for root, dirs, files in os.walk(src_dir+'English'+'/'):
@@ -88,14 +90,14 @@ class DataLoader:
 
         return label2char
 
-
 class OCRData:
-    def __init__(self, data, device, size_to=None):
+    def __init__(self, data: pd.DataFrame, device: torch.device,
+                 size_to: tuple[int, int]=None):
         self.device = device
         self.avg_size = size_to
         self.transformed = self._transform_data(data)
         
-    def _transform_data(self, data):
+    def _transform_data(self, data: pd.DataFrame) -> dict:
         """Resize, encode, rescale images to numpy matrix. Transform image and
         labels to tensors and send to device."""
         # Resize images to average size of training data, recode pixels from 
@@ -112,11 +114,11 @@ class OCRData:
         
         return transformed_data
         
-    def _resize_img(self, img):
+    def _resize_img(self, img: str) -> np.ndarray:
         """Opens file and resizes image to average size from training data."""
         return np.array(Image.open(img).resize((self.avg_size)))    
     
-    def _scale_imgs(self, imgs):
+    def _scale_imgs(self, imgs: np.ndarray) -> np.ndarray:
         """Rescales values in image matrix for convolutional network."""
         size = imgs.shape
         scaled_imgs = StandardScaler().fit_transform(

@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
+
 from dataloader_ML2A1 import * 
 
 # Initialise argument parser and define command line arguments.
@@ -30,14 +31,14 @@ parser.add_argument('-srcd', '--source_dir',
                     help='Pass a custom source directory pointing to image data.')
 
 class CNN(nn.Module):
-    def __init__(self, n_classes: int, img_dims: tuple, idx_to_char):
+    def __init__(self, n_classes: int, img_dims: tuple[int, int], idx_to_char):
         super(CNN, self).__init__()
         # Initialise model params.
         self.input_size = img_dims[0]*img_dims[1]
         self.hsize_1 = int(self.input_size/2)
         self.output_size = n_classes
         self.idx_to_char = idx_to_char
-        self.img_dims = img_dims  # used to resize test data.
+        self.img_dims = img_dims  # used to resize test data
         
         # Define net structure.
         self.net1 = nn.Sequential(
@@ -53,7 +54,7 @@ class CNN(nn.Module):
             nn.LogSoftmax(dim=1)
             )
         
-    def forward(self, X, mode=None):
+    def forward(self, X: torch.Tensor, mode: str=None) -> torch.Tensor|str:
         # Reshape batched input and pass through for convolutional layer.
         net1_output = self.net1(X.reshape(1, X.shape[0], X.shape[1]*X.shape[2]))
         # Send output through classifier.
@@ -66,7 +67,7 @@ class CNN(nn.Module):
             # Return predicted character.
             return self.idx_to_char(int(preds.argmax()))
         
-def batch_data(data, batch_size):
+def batch_data(data: OCRData, batch_size: int) -> list:
     """Shuffle training data again (unseeded) and create batches."""
     # Shuffle data.
     permutation = torch.randperm(data['imgs'].size()[0])
@@ -79,7 +80,8 @@ def batch_data(data, batch_size):
 
     return batches
         
-def train(data: DataLoader, device: torch.device, epochs: int, batch_size: int):
+def train(data: DataLoader, device: torch.device, epochs: int,
+          batch_size: int) -> CNN:
     """Train and return a CNN model."""
     # Transform & batch training data.
     print('Transforming data...')        
@@ -117,10 +119,10 @@ def train(data: DataLoader, device: torch.device, epochs: int, batch_size: int):
     return model
 
 def init_train(src_dir: str, specs: dict, device: torch.device, epochs: int=5,
-               batch_size: int=32, savefile: str=None):
+               batch_size: int=32, savefile: str=None) -> CNN:
     """Call functions to read & process training data, train (& save) a CNN."""
     # Read data from source directory & process it according to specs.
-    print('Selecting files for training:', specs)
+    print('\nSelecting files for training:', specs)
     datasets = DataLoader(src_dir, specs)
     
     # Train model.
@@ -132,7 +134,7 @@ def init_train(src_dir: str, specs: dict, device: torch.device, epochs: int=5,
         torch.save(m, savefile)
         print('Model saved to ', savefile)
     
-    return m, datasets
+    return m
 
 if __name__=="__main__":
     # Set device and default source directory.
@@ -148,5 +150,5 @@ if __name__=="__main__":
     specs = {'languages': args.languages, 'dpis': args.dpis, 'fonts': args.fonts}
     
     # Initiate training.
-    model, datasets = init_train(src_dir, specs, device, args.epochs, args.batch_size,
+    model = init_train(src_dir, specs, device, args.epochs, args.batch_size,
                        args.savefile)

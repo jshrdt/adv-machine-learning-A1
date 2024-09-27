@@ -59,15 +59,15 @@ The following arguments are optional. The first two alter behaviour during the t
 
 ### Testing a model with test_ML2A1.py
 
-To test a model, run the test script and specify what data to test on. The script can either test a pre-trained model (passed with --load), or will otherwise interactively ask for information to train a new model on execution.
+To test a model, run the test script and specify what data to test on. The script can either test a pre-trained model (passed with --loadfile), or will otherwise interactively ask for information to train a new model on execution.
 
 The following arguments are required and determine which files will be extracted from the source directory to use during testing. They can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
 * --languages (-lg):	Thai | English | Thai English
 * --dpis (-dpi): 	200 | 300 | 400 | ...
 * --fonts (-ft):	normal | bold | italic | italic_bold | ...
 
-The following arguments are optional. --load specifies where to find the pre-trained model, if invalid/left unspecified, the test script allows the user to specify information to train a new model using the train script. --verbose increases the amount of detail printed during model evaluation. The final argument may be used to specify a different directory to read the source data from.
-* --load (-ld):		any filename/path, defaults to None
+The following arguments are optional. --loadfile specifies where to find the pre-trained model, if invalid/left unspecified, the test script allows the user to specify information to train a new model using the train script. --verbose increases the amount of detail printed during model evaluation. The final argument may be used to specify a different directory to read the source data from.
+* --loadfile (-ld):		any filename/path, defaults to None
 * --verbose (-v):	on/off flag
 * --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
 
