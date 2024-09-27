@@ -68,16 +68,18 @@ class CNN(nn.Module):
         
 def train(data: DataLoader, device: torch.device, epochs: int, batch_size: int):
     """Train and return a CNN model."""
-    print('Start training...')
-    
+    # Transform & batch training data.
+    print('Transforming & batching data...')        
+    train_data = OCRData(data.train, device, size_to=data.avg_size).transformed
+    train_batches = MyBatcher(train_data, batch_size).batches
+
     # Batch training data, initialise model, optimizer, and loss function.
-    train_batches = MyBatcher(data.train, batch_size).batches
     model = CNN(data.n_classes, data.avg_size, data.idx_to_char).to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.01)
     # loss_func = nn.CrossEntropyLoss()
     loss_func = nn.NLLLoss()
     
-    # Start training loop.
+    print('Start training...')
     for epoch in range(epochs):
         # Print current epoch and reset total loss.
         print(f'\nepoch {epoch+1}')
@@ -97,9 +99,7 @@ def train(data: DataLoader, device: torch.device, epochs: int, batch_size: int):
             optimizer.step()
             
         print(f'loss {total_loss}')
-        
-    print('Training complete.\n')
-    
+            
     return model
 
 def init_train(src_dir: str, specs: dict, device: torch.device, epochs: int=5,
@@ -107,19 +107,19 @@ def init_train(src_dir: str, specs: dict, device: torch.device, epochs: int=5,
     """Call functions to read & process training data, train (& save) a CNN."""
     # Read data from source directory & process it according to specs.
     print('Selecting files for training:', specs)
-    data = DataLoader(src_dir, specs, device)
-
+    datasets = DataLoader(src_dir, specs)
+    
     # Train model.
-    m = train(data, device, epochs, batch_size)
+    m = train(datasets, device, epochs, batch_size)
+    print('Training complete.\n')
     
     # Save model to file.
     if savefile:
         torch.save(m, savefile)
         print('Model saved to ', savefile)
     
-    return m
-    
-    
+    return m, datasets
+
 if __name__=="__main__":
     # Set device and default source directory.
     if torch.cuda.is_available():
@@ -134,5 +134,5 @@ if __name__=="__main__":
     specs = {'languages': args.languages, 'dpis': args.dpis, 'fonts': args.fonts}
     
     # Initiate training.
-    model = init_train(src_dir, specs, device, args.epochs, args.batch_size,
+    model, datasets = init_train(src_dir, specs, device, args.epochs, args.batch_size,
                        args.savefile)

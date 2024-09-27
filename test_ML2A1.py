@@ -27,10 +27,16 @@ parser.add_argument('-srcd', '--source_dir',
 
 
 ## testing ##
-def test(data, model):
+def test(data: DataLoader, model: CNN, device: torch.device):
+    # Transform test data.
+    print('Transforming test data...')        
+    test_data = OCRData(data.test, device, size_to=model.img_dims).transformed
+
+    print('Testing model...')
     model.eval()
-    X = data.test['imgs']
-    y_true = [data.idx_to_char(label) for label in data.test['labels']]
+    X = test_data['imgs']
+    
+    y_true = [data.idx_to_char(label) for label in test_data['labels']]
 
     y_preds = [model(X[i].reshape(1, X[i].shape[0], X[i].shape[1]))
                for i in range(len(X))]
@@ -118,25 +124,35 @@ if __name__=="__main__":
     else:
         # get info to train new model
         if input('No pre-trained model found, train new model?\n(y/n) ') == 'y':            
-            if input(f'Train new model on same specifications as test data?\n{specs}\n(y/n) ') == 'n':
-                train_specs = get_alt_train_specs()
-            else:
+            if input(f'Train new model on same specifications as test data?\n{specs}\n(y/n) ') == 'y':
+                keep_specs = True
                 train_specs = specs
-                
-            if input('Keep default params for epochs(5)/batch_size(32)/savefile(None)?\n(y/n) ') =='n':
-        ## TODO dummy proof these inputs, so u can pass none, and it doesnt fail due to the 
+            else:
+                keep_specs = False
+                train_specs = get_alt_train_specs()
+
+            if input('Keep default params for epochs(5)/batch_size(32)/savefile(None)?\n(y/n) ') =='y':
+                m, datasets = init_train(src_dir, train_specs, device) 
+            else:
+         ## TODO dummy proof these inputs, so u can pass none, and it doesnt fail due to the 
         # attempted int() conversion
                 epochs = int(input('Number of epochs: '))
                 b_s = int(input('Size of batches: '))
                 save = input('File/pathname to save model to: ')
-                m = init_train(src_dir, train_specs, device, epochs, b_s, save)
-            else:
-                m = init_train(src_dir, train_specs, device)
+                m, datasets = init_train(src_dir, train_specs, device, epochs, b_s, save)
+
         else:
             print('Test script exited.')
 
     ## testing ##
-    print('Selecting files for testing:', specs)
-    test_data = DataLoader(src_dir, specs, device, size_to=m.img_dims)
-    preds, gold = test(test_data, m)
+    if keep_specs == True:
+        # use test data from datasets created with train_specs
+        preds, gold = test(datasets, m, device)
+
+    else:
+        print('Selecting files for testing:', specs)
+        datasets = DataLoader(src_dir, specs)
+        preds, gold = test(datasets, m, device)
+
+        
     eval(preds, gold, verbose=args.verbose)

@@ -4,18 +4,50 @@ from PIL import Image
 import random
 import numpy as np
 import torch
+import pandas as pd
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
-    
-class DataLoader:
-    def __init__(self, src_dir, data_specs, device, size_to=None):
+
+class OCRData:
+    def __init__(self, data, device, size_to=None):
         self.device = device
-        self.le = LabelEncoder()  # filenr 2 idx & idx 2 filenr
-        self.raw_data = self._read_data(src_dir, data_specs)
+        self.avg_size = size_to
+        self.transformed = self._transform_data(data)
         
-        output = self._transform_data(self.raw_data, size_to)
-        self.train, self.dev, self.test, self.avg_size = output
+    def _transform_data(self, data):
+        # Resize images to average size of training data, recode pixels from 
+        # True/False to 1/0, then transform to matrix of np arrays.
+        imgs = np.array([np.array([[0 if dot else 1 for dot in line] for line
+                                   in self._resize_img(item)])
+                         for item in data['files']])
+        
+        # Rescale values in image matrix. Transform X, y to tensor, send to device.
+        X = torch.tensor(self._scale_imgs(imgs)).float().to(self.device)
+        y = torch.tensor(data['labels']).to(self.device)
+
+        transformed_data = {'imgs': X, 'labels': y}
+        
+        return transformed_data
+        
+    def _resize_img(self, item):
+        return np.array(Image.open(item).resize((self.avg_size)))    
+    
+    def _scale_imgs(self, imgs):
+        size = imgs.shape
+        scaled_imgs = StandardScaler().fit_transform(
+                        imgs.reshape(size[0], size[1]*size[2])).reshape(size)
+                                   
+        return scaled_imgs
+
+        
+class DataLoader:
+    def __init__(self, src_dir, data_specs):
+        self.le = LabelEncoder()  # filenr 2 idx & idx 2 filenr
+        self.data_df = self._read_data(src_dir, data_specs)
+        self.train, self.dev, self.test = self._split_data(self.data_df)
+        self.avg_size = self._get_avg_size(self.train)
+        
         self.n_classes = len(self.le.classes_)
         self.filenr2char = self._get_ids(src_dir)  # filenr 2 char
              
@@ -40,67 +72,42 @@ class DataLoader:
                 # add: save the id nrs to use as index filter in charid_dict
                 for fname in files:
                     if fname.endswith('bmp'):
-                        fileinfo.append((os.path.join(root, fname),
-                                         fname[-7:-4]))
+                        fileinfo.append((os.path.join(root, fname),fname[-7:-4]))
                         
         # seeded shuffling of data, to ensure any test data is always unseen
-        random.Random(11).shuffle(fileinfo)
-        
-        return fileinfo
-        
-    def _transform_data(self, data_list, size_to=None):
-        print('Transforming data...')        
-        # extract and transform images
-        # takes longer, as images have to be opened twice, but avoids too many
-        # open files at one    
-        sizes = [Image.open(item[0]).size for item in data_list]
-        
-        # find avg size of train files to decide what model should resize input to
-        if size_to:
-            avg_size = size_to
-        else:
-            avg_size = (round(sum([size[0] for size in sizes]) / len(sizes)),
-                        round(sum([size[1] for size in sizes]) / len(sizes)))
-        # Resize images to average size of training data, recode pixels from 
-        # True/False to 1/0, then transform to matrix of np arrays.
-        np_imgs = np.array([np.array([[0 if dot else 1 for dot in line] for line
-                                      in self._resize_img(item, avg_size)])
-                            for item in data_list])
-        
-        # Rescale values in image matrix, transform to tensor & send to device.
-        imgs = torch.tensor(self._scale_imgs(np_imgs)).float().to(self.device)
+        fileinfo_df = pd.DataFrame(fileinfo, columns=['files', 'labels'])
+        fileinfo_df = fileinfo_df.sample(frac=1, random_state=11, ignore_index=True)
+                
+        return fileinfo_df
+            
+    def _split_data(self, data_df):
 
-        # Fit label encoder on y labels.
-        file_labels = [item[1] for item in data_list]
-        self.le.fit(file_labels)
-        # Transform y labels to unique idx.
-        idx_labels = torch.tensor(self.le.transform(file_labels))
+        # Fit label encoder on y labels & transform y labels to unique idx.
+        self.le.fit(data_df['labels'])
+        idx_labels = self.le.transform(data_df['labels'])
+                
+        # Set cutoff points for data splits.
+        train_len = int(len(data_df)*0.8)
+        dev_len = int(train_len + len(data_df)*0.1)
         
-        
-        # split into train, dev, and test set 
-        # & transform each set's imgs into single scaled matrix
-        # set cutoff points
-        train_len = int(len(idx_labels)*0.8)
-        dev_len = int(train_len + len(idx_labels)*0.1)
-        # split data
-        train_data = {'imgs': imgs[:train_len],
+        # Split data.
+        train_data = {'files': data_df['files'][:train_len],
                       'labels': idx_labels[:train_len]}
-        dev_data = {'imgs': imgs[train_len:dev_len],
+        dev_data = {'files': data_df['files'][train_len:dev_len],
                     'labels': idx_labels[train_len:dev_len]}
-        test_data = {'imgs': imgs[dev_len:],
+        test_data = {'files': data_df['files'][dev_len:],
                      'labels': idx_labels[dev_len:]}
         
-        return train_data, dev_data, test_data, avg_size
-    
-    def _resize_img(self, item, avg_size):
-        return np.array(Image.open(item[0]).resize((avg_size)))    
-    
-    def _scale_imgs(self, imgs):
-        size = imgs.shape
-        scaled_imgs = StandardScaler().fit_transform(
-                        imgs.reshape(size[0], size[1]*size[2])).reshape(size)
-                                   
-        return scaled_imgs
+        return train_data, dev_data, test_data
+        
+    def _get_avg_size(self, train_df):
+        # Find average size of training files to resize input images to.
+        sizes = [Image.open(file).size for file in train_df['files']]
+        
+        avg_size = (round(sum([size[0] for size in sizes]) / len(sizes)),
+                    round(sum([size[1] for size in sizes]) / len(sizes)))
+        
+        return avg_size
     
     def _get_ids(self, src_dir):
         # get id2char mapping, files are identical across languages
