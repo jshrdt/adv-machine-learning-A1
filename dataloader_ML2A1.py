@@ -16,8 +16,7 @@ class DataLoader:
         
         output = self._transform_data(self.raw_data, size_to)
         self.train, self.dev, self.test, self.avg_size = output
-        self.n_classes = len(set(self.train['labels']))
-        
+        self.n_classes = len(self.le.classes_)
         self.filenr2char = self._get_ids(src_dir)  # filenr 2 char
              
     def idx_to_char(self, idx):
@@ -52,7 +51,6 @@ class DataLoader:
     def _transform_data(self, data_list, size_to=None):
         print('Transforming data...')        
         # extract and transform images
-        
         # takes longer, as images have to be opened twice, but avoids too many
         # open files at one    
         sizes = [Image.open(item[0]).size for item in data_list]
@@ -63,19 +61,21 @@ class DataLoader:
         else:
             avg_size = (round(sum([size[0] for size in sizes]) / len(sizes)),
                         round(sum([size[1] for size in sizes]) / len(sizes)))
-        # resize images to avg size, recode image pixels from True/False to 1/0,
-        # then transform to matrix of np arrays
+        # Resize images to average size of training data, recode pixels from 
+        # True/False to 1/0, then transform to matrix of np arrays.
         np_imgs = np.array([np.array([[0 if dot else 1 for dot in line] for line
                                       in self._resize_img(item, avg_size)])
                             for item in data_list])
-        # rescale each value to be between 0, 1.
-        imgs = self._scale_imgs(np_imgs)
+        
+        # Rescale values in image matrix, transform to tensor & send to device.
+        imgs = torch.tensor(self._scale_imgs(np_imgs)).float().to(self.device)
 
-        # fit label encoder & transform labels to unique idx
+        # Fit label encoder on y labels.
         file_labels = [item[1] for item in data_list]
         self.le.fit(file_labels)
-    ## tbd send to device, just after rescale
+        # Transform y labels to unique idx.
         idx_labels = torch.tensor(self.le.transform(file_labels))
+        
         
         # split into train, dev, and test set 
         # & transform each set's imgs into single scaled matrix
@@ -97,10 +97,9 @@ class DataLoader:
     
     def _scale_imgs(self, imgs):
         size = imgs.shape
-        scaled_imgs = torch.tensor(StandardScaler().fit_transform(
-                        imgs.reshape(size[0], size[1]*size[2])
-                        ).reshape(size)
-                                   ).float().to(self.device)
+        scaled_imgs = StandardScaler().fit_transform(
+                        imgs.reshape(size[0], size[1]*size[2])).reshape(size)
+                                   
         return scaled_imgs
     
     def _get_ids(self, src_dir):

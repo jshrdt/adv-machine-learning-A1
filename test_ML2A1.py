@@ -27,14 +27,17 @@ parser.add_argument('-srcd', '--source_dir',
 
 
 ## testing ##
-def test(data, model, verbose=False):
+def test(data, model):
     model.eval()
     X = data.test['imgs']
     y_true = [data.idx_to_char(label) for label in data.test['labels']]
 
     y_preds = [model(X[i].reshape(1, X[i].shape[0], X[i].shape[1]))
                for i in range(len(X))]
-    
+        
+    return y_preds, y_true
+
+def eval(y_preds, y_true, verbose=False):
     # accuracy
     accuracy = accuracy_score(y_true, y_preds)
     # precision
@@ -64,7 +67,7 @@ def test(data, model, verbose=False):
         df = evals.transpose()    
         for measure in measures:
             perc25 = round(df.describe().loc['25%'].loc[measure], 4) 
-            min_val = perc25 if perc25 <0.5 else 0.5
+            min_val = perc25 if perc25 < 0.6 else 0.6
             print(f'\n{measure} score below {min_val}:')
             print(df[df[measure] < min_val][measure])
     else:
@@ -96,14 +99,15 @@ def get_alt_train_specs():
     return specs
         
 if __name__=="__main__":
-    # defaults
-    # defaults
-    src_dir_cpu = '../ThaiOCR/ThaiOCR-TrainigSet/'
-    src_dir_gpu = '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
-    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
-    src_dir = src_dir_gpu if torch.cuda.is_available() else src_dir_cpu
-     
-    # Get specifcations for training data from argparse
+     # Set device and default soruce directory
+    if torch.cuda.is_available():
+        device = 'cuda:1'
+        src_dir = '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
+    else:
+        device = 'cpu'
+        src_dir = '../ThaiOCR/ThaiOCR-TrainigSet/'
+        
+    # Get specifcations for training data from argparse.
     args = parser.parse_args()
     specs = {'languages': args.languages, 'dpis': args.dpis, 'fonts': args.fonts}
 
@@ -134,4 +138,5 @@ if __name__=="__main__":
     ## testing ##
     print('Selecting files for testing:', specs)
     test_data = DataLoader(src_dir, specs, device, size_to=m.img_dims)
-    test(test_data, m, verbose=args.verbose)
+    preds, gold = test(test_data, m)
+    eval(preds, gold, verbose=args.verbose)

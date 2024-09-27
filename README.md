@@ -56,6 +56,7 @@ The following arguments are optional. The first two alter behaviour during the t
 > $ python3 train_ML2A1.py -lg Thai English -dpi 200 300 -ft italic -ep 8 -bs 64 -s ThaiEn_200300_ita_custom -srcd [custom/path/to/OCR/data]
 
 
+
 ### Testing a model with test_ML2A1.py
 
 To test a model, run the test script and specify what data to test on. The script can either test a pre-trained model (passed with --load), or will otherwise interactively ask for information to train a new model on execution.
@@ -84,7 +85,7 @@ ___
 
 1) Thai normal text, 200dpi - Thai normal text, 200dpi
 
-> $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -v
+> $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -v  
 Evaluation
 
 Overall accuracy: 0.8
@@ -102,9 +103,6 @@ Per-class measures
 ซ              0.63    0.75      0.69
 า              0.60    0.88      0.71
 MACROS         0.81    0.79      0.78
-
-[98 rows x 3 columns]
---------------------------------------------------------------------------------
 
 Precision performance below 0.5:
 อ้ใ(ติด)    0.000000
@@ -134,30 +132,33 @@ F1-score performance below 0.5:
 อ์ไ(ติด)    0.210526
 Name: F1-score, dtype: float64
 
+
 2) Thai normal 400 -> Thai normal 200
 
 Overall accuracy: 0.76
 
-Performance across all classes
+Performance across all classes  
 Precision    0.7674
 Recall       0.7572
 F1-score     0.7390
+
 
 3) Thai normal 400 - Thai bold 400
 
 Overall accuracy: 0.77
 
-Performance across all classes
+Performance across all classes  
 Precision    0.7666
 Recall       0.7537
 F1-score     0.7412
+
 
 4) Thai bold - Thai normal
 Evaluation
 
 Overall accuracy: 0.75
 
-Performance across all classes
+Performance across all classes  
 Precision    0.7695
 Recall       0.7475
 F1-score     0.7360
@@ -197,6 +198,8 @@ ___
 ? Fixing the txt file from source directory, for correct label extraction/encoding/decoding
 
 ? Too many open files problem (open img -> get sizes -> resize ; vs open img+get sizes -> open images+resize) as PIL only closes images when img data is used
+
+? Turns out sets don't work on tensors,,,for a while predicted over 13k classes instead of ~150
 
 ? On testing thai200normal, a new model would usually hover around 0.8 overall accuracy but sometimes?? Drop down to 0.01???
 
