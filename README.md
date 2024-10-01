@@ -435,3 +435,25 @@ ___
 ? Inconsistent torch behaviour: https://github.com/pytorch/pytorch/issues/51112 solved : .reset_index(drop=True)
 
 ? Restructuring: open files twice, but transform only those when needed
+
+___ 
+
+## Bonus part
+
+? Isolating characters, guessing whitespaces
+
+* model is surprisingly sensitive to even one row or column of empty pixel in the margins
+
+i.e.  Output for dummy image with '2.5 Drawing Editor'. 
+- No empty lines: 2.s DraWing EdItor  
+- single row above/below: 2*s Dอ์aW1ng Edi*๐r  
+- 1+ empty rows above/below: ?อื่(ติด)5 pfฐฟs6ฏ rdฝั(ติด)xอิE - -
+- 1+ empty columns left/right: 2.s DraWIng Ed|*or - -
+- single empty column left/right: 2อึ่(ติด)5 p๔อีฟs6ฏ rdๆfbE - -
+
+
+
+
+* data being equally represented might make classification harder: most test/'natural' has lower amount of special and/or numeric characters
+
+

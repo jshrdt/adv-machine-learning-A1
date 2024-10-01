@@ -38,6 +38,7 @@ class DataLoader:
                     if fname.endswith('bmp'):
                         fileinfo.append((os.path.join(root, fname), fname[-7:-4]))
         
+        print('Preprocessing data...')
         # Transform files + labels data to pd df for easy accessing.
         data_df = pd.DataFrame(fileinfo, columns=['files', 'labels'])
      
@@ -62,10 +63,16 @@ class DataLoader:
         
     def _get_avg_size(self, train_df: pd.DataFrame) -> tuple[int, int]:
         """Find average size of training files to resize input images to."""
-        sizes = [Image.open(file).size for file in train_df['files']]
+        sizes_w, sizes_h = list(), list()
+        for file in train_df['files']:
+            size = Image.open(file).size
+            sizes_w.append(size[0])
+            sizes_h.append(size[1])
         
-        avg_size = (round(sum([size[0] for size in sizes]) / len(sizes)),
-                    round(sum([size[1] for size in sizes]) / len(sizes)))
+        #sizes = [Image.open(file).size for file in train_df['files']]
+        
+        avg_size = (round(sum(sizes_w) / len(train_df['files'])),
+                    round(sum(sizes_h) / len(train_df['files'])))
         
         return avg_size
     
@@ -90,13 +97,15 @@ class DataLoader:
 
         return label2char
 
+
 class OCRData:
     def __init__(self, data: pd.DataFrame, device: torch.device,
-                 size_to: tuple[int, int]=None):
+                 size_to: tuple[int, int]=None, mode=None):
         self.device = device
         self.avg_size = size_to
+        self.mode = mode
         self.transformed = self._transform_data(data)
-        
+                
     def _transform_data(self, data: pd.DataFrame) -> dict:
         """Resize, encode, rescale images to numpy matrix. Transform image and
         labels to tensors and send to device."""
@@ -105,7 +114,7 @@ class OCRData:
         imgs = np.array([np.array([[0 if dot else 1 for dot in line]
                                    for line in self._resize_img(item)])
                          for item in data['files']])
-        
+                                
         # Rescale image matrix. Send tensors of imgs (X) and labels (y) to device.
         X = torch.tensor(self._scale_imgs(imgs)).float().to(self.device)
         y = torch.tensor(data['labels'].reset_index(drop=True)).to(self.device)
@@ -116,7 +125,17 @@ class OCRData:
         
     def _resize_img(self, img: str) -> np.ndarray:
         """Opens file and resizes image to average size from training data."""
-        return np.array(Image.open(img).resize((self.avg_size)))    
+        if self.mode == 'bonus':
+            # convert back to image object to resize, then return to expected input
+            img_obj = Image.fromarray((img * 255).astype(np.uint8))
+            img_arr = np.array(img_obj.convert('1').resize((self.avg_size)))
+            # needed because image's 1/0 encoding was flipped already during cropping
+            converted = np.array([[0 if dot else 1 for dot in line]
+                                  for line in img_arr])
+            return converted
+        
+        else:
+            return np.array(Image.open(img).resize((self.avg_size)))    
     
     def _scale_imgs(self, imgs: np.ndarray) -> np.ndarray:
         """Rescales values in image matrix for convolutional network."""

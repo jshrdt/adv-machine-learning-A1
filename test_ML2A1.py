@@ -31,7 +31,11 @@ def get_model(loadfile: str, test_specs: dict) -> CNN:
     # Load model, get test data according to specs.
     if loadfile:
         print('Loading model from: ', loadfile)
-        m = torch.load(loadfile, weights_only=False)
+        if not torch.cuda.is_available():
+            m = torch.load(loadfile, weights_only=False,
+                           map_location=torch.device('cpu'))
+        else:
+             m = torch.load(loadfile, weights_only=False)
     # Get info to train new model.
     else:
         print('-'*80)
@@ -141,7 +145,7 @@ if __name__=="__main__":
         src_dir = '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
     else:
         device = 'cpu'
-        src_dir = '../ThaiOCR/ThaiOCR-TrainigSet/'
+        src_dir = './ThaiOCR/ThaiOCR-TrainigSet/'
         
     # Get specifications for testing from argparse.
     args = parser.parse_args()

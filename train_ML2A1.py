@@ -67,19 +67,6 @@ class CNN(nn.Module):
             # Return predicted character.
             return self.idx_to_char(int(preds.argmax()))
         
-def batch_data(data: OCRData, batch_size: int) -> list:
-    """Shuffle training data again (unseeded) and create batches."""
-    # Shuffle data.
-    permutation = torch.randperm(data['imgs'].size()[0])
-    permX = data['imgs'][permutation]
-    permy = data['labels'][permutation]
-    # Extract batches.
-    batches = [(permX[i*batch_size:(i+1)*batch_size],
-                permy[i*batch_size:(i+1)*batch_size])
-            for i in range(int(data['imgs'].size()[0]/batch_size))]
-
-    return batches
-        
 def train(data: DataLoader, device: torch.device, epochs: int,
           batch_size: int) -> CNN:
     """Train and return a CNN model."""
@@ -118,6 +105,19 @@ def train(data: DataLoader, device: torch.device, epochs: int,
             
     return model
 
+def batch_data(data: OCRData, batch_size: int) -> list:
+    """Shuffle training data again (unseeded) and create batches."""
+    # Shuffle data.
+    permutation = torch.randperm(data['imgs'].size()[0])
+    permX = data['imgs'][permutation]
+    permy = data['labels'][permutation]
+    # Extract batches.
+    batches = [(permX[i*batch_size:(i+1)*batch_size],
+                permy[i*batch_size:(i+1)*batch_size])
+            for i in range(int(data['imgs'].size()[0]/batch_size))]
+
+    return batches
+        
 def init_train(src_dir: str, specs: dict, device: torch.device, epochs: int=5,
                batch_size: int=32, savefile: str=None) -> CNN:
     """Call functions to read & process training data, train (& save) a CNN."""
@@ -136,6 +136,7 @@ def init_train(src_dir: str, specs: dict, device: torch.device, epochs: int=5,
     
     return m
 
+
 if __name__=="__main__":
     # Set device and default source directory.
     if torch.cuda.is_available():
@@ -143,7 +144,7 @@ if __name__=="__main__":
         src_dir = '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
     else:
         device = 'cpu'
-        src_dir = '../ThaiOCR/ThaiOCR-TrainigSet/'
+        src_dir = './ThaiOCR/ThaiOCR-TrainigSet/'
     
     # Get specifcations for training data from argparse.
     args = parser.parse_args()
