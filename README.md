@@ -4,6 +4,10 @@
 
 * argparse, numpy, os, pandas, PIL, sklearn.metrics, sklearn.preprocessing, torch, tqdm
 
+#### Note
+
+'>>' indicated interactive terminal menu waiting for user input, example input included below. Inputs are not proofed for exceptions, expected input format is given here and on execution.
+
 ___
 
 ## Quickstart
