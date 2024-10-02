@@ -6,7 +6,7 @@
 
 #### Note
 
-'>>' indicated interactive terminal menu waiting for user input, example input included below. Inputs are not proofed for exceptions, expected input format is given here and on execution.
+'>>' indicates interactive terminal menu waiting for user input, example input is included below. Inputs are not proofed for exceptions, expected format is given in this file and on execution.
 
 ___
 
@@ -83,17 +83,17 @@ The following arguments are optional. --loadfile specifies where to find the pre
 * With new model trained from scratch, same specifications, same params, saved to file
 > $ python3 test_ML2A1.py -lg Thai -dpi 400 -ft normal bold -v 
 
-> No model loaded, train new model?
+> No model loaded, train new model?  
 > (y/n) >> y
 > 
-> File/pathname to save model to:
+> File/pathname to save model to:  
 > (None|str) >> Thai400_normalbold
 > 
-> Train new model on same specifications as test data?
-> {'languages': ['Thai'], 'dpis': ['400'], 'fonts': ['normal', 'bold']}
+> Train new model on same specifications as test data?  
+> {'languages': ['Thai'], 'dpis': ['400'], 'fonts': ['normal', 'bold']}  
 > (y/n) >> y
 > 
-> Keep defaults for epochs (20) | batch_size (128) | learningrate (0.0025)?
+> Keep defaults for epochs (20) | batch_size (128) | learningrate (0.0025)?  
 > (y/n) >> y
 
 * With new model trained from scratch, different specifications (Thai+English, 300dpi, normal+italic), different params, not saved
@@ -114,15 +114,15 @@ The following arguments are optional. --loadfile specifies where to find the pre
 > 
 > Train on which language(s)?  
 > {'1': 'English', '2': 'Thai'}. 
-> >> 12
+> (int) >> 12
 > 
 > Train on which resolution(s)?  
 > {'1': '200', '2': '300', '3': '400'}. 
-> >> 2
+> (int) >> 2
 > 
 > Train on which font(s)?  
 > {'1': 'normal', '2': 'bold', '3': 'italic', '4': 'bold_italic'}  
-> >> 13
+> (int) >> 13
 > 
 > Keep defaults for epochs (20) | batch_size (128) | learningrate (0.0025)?  
 > (y/n) >> n

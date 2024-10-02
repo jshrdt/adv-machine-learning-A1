@@ -69,11 +69,11 @@ def get_new_train_specs() -> dict:
     # Get user input for languages/resolution/fonts to train on.
     try:
         lg = [lg_read[idx] for idx 
-            in input(f'\nTrain on which language(s)?\n{lg_read}\n>> ')]
+            in input(f'\nTrain on which language(s)?\n{lg_read}\n(int)>> ')]
         dpi = [dpi_read[idx] for idx 
-            in input(f'\nTrain on which resolution(s)?\n{dpi_read}\n>> ')]
+            in input(f'\nTrain on which resolution(s)?\n{dpi_read}\n(int)>> ')]
         ft = [ft_read[idx] for idx 
-            in input(f'\nTrain on which font(s)?\n{ft_read}\n>> ')]
+            in input(f'\nTrain on which font(s)?\n{ft_read}\n(int)>> ')]
     except KeyError:
         print('Invalid keyboard input. Test script exited.\n')
 
