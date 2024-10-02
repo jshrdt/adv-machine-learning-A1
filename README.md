@@ -55,7 +55,7 @@ The following arguments are optional. --epochs, --batch_size, and --learning_rat
 * --source_dir (-srcd):	pathname to directory for OCR data, on GPU defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/', on CPU defaults to './ThaiOCR/ThaiOCR-TrainigSet/'
 
 #### Example execution:  
-> $ python3 train_ML2A1.py -lg Thai English -dpi 200 300 -ft italic -ep 8 -bs 64 -s ThaiEn_200300_ita_custom -srcd [custom/path/to/OCR/data]
+> $ python3 train_ML2A1.py -lg Thai English -dpi 200 300 -ft italic -ep 8 -bs 64 -lr 0.005 -s ThaiEn_200300_ita
 
 
 ### Testing a model with test_ML2A1.py
@@ -73,7 +73,65 @@ The following arguments are optional. --loadfile specifies where to find the pre
 * --source_dir (-srcd):	pathname to directory for OCR data, on GPU defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/', on CPU defaults to './ThaiOCR/ThaiOCR-TrainigSet/'
 
 #### Example execution:  
-> $ python3-s test_ML2A1.py -lg Thai -dpi 300 -ft normal bold -ld ThaiEn_200300_ita_custom -v -srcd [custom/path/to/OCR/data]
+* With model loaded from file  
+> $ python3 test_ML2A1.py -lg Thai -dpi 300 -ft normal bold -ld ThaiEn_200300_ita_custom -v  
+
+* With new model trained from scratch, same specifications, same params, saved to file
+> $ python3 test_ML2A1.py -lg Thai -dpi 400 -ft normal bold -v 
+
+> No model loaded, train new model?
+> (y/n) >> y
+> 
+> File/pathname to save model to:
+> (None|str) >> Thai400_normalbold
+> 
+> Train new model on same specifications as test data?
+> {'languages': ['Thai'], 'dpis': ['400'], 'fonts': ['normal', 'bold']}
+> (y/n) >> y
+> 
+> Keep defaults for epochs (20) | batch_size (128) | learningrate (0.0025)?
+> (y/n) >> y
+
+* With new model trained from scratch, different specifications (Thai+English, 300dpi, normal+italic), different params, not saved
+> $ python3 test_ML2A1.py -lg Thai -dpi 400 -ft bold -v   
+
+> No model loaded, train new model?
+> (y/n) >> y
+> 
+> File/pathname to save model to:
+> (None|str) >> 
+> 
+> Train new model on same specifications as test data?
+> {'languages': ['Thai'], 'dpis': ['400'], 'fonts': ['bold']}
+> (y/n) >> n
+> 
+> Choose specifications for training data.
+> Enter single number, or combination (e.g. 1 -> English; 12 -> English+Thai).
+> 
+> Train on which language(s)?
+> {'1': 'English', '2': 'Thai'}
+> >> 12
+> 
+> Train on which resolution(s)?
+> {'1': '200', '2': '300', '3': '400'}
+> >> 2
+> 
+> Train on which font(s)?
+> {'1': 'normal', '2': 'bold', '3': 'italic', '4': 'bold_italic'}
+> >> 13
+> 
+> Keep defaults for epochs (20) | batch_size (128) | learningrate (0.0025)?
+> (y/n) >> n
+> 
+> Number of epochs:
+> (None|int) >> 15
+> 
+> Size of batches:
+> (None|int) >> 64
+> 
+> Learning rate:
+> (None|float) >> 0.003
+
 
 ### Dataloader
 
@@ -89,7 +147,7 @@ In general I did quite a bit of restructuring as time went on, because I wanted 
 
 To ensure uniform input shapes across images (and resolutions), I decided to use the resize method for PIL Image objects and to resize to the average image size across all images for the given training specifications (i.e. all images for Thai-200dpi-normal). By storing this size as an attribute in OCRModel.img_dims, it became easily available to allow for appropriate resizing when testing a pre-trained model as well.
 
-To get this average size in the DataLoader._get_avg_size function, I would originally open the images in a separate list first, then get the average size, and resize them. However, as PIL doesn't close images' files until their data has been read (for example after calling the .size method), this caused a problem of having too many opened files as the training data increased. So in the current version, the images are opened twice: once to get their size (DataLoader._get_avg_size), and then once again to resize them (OCRData._resize_img). Though most files are opened twice now, resizing and scaling (OCRData._transform_data) is only applied to images as needed (only training or only test set); in contrast the earlier version used to always transform the entire dataset before creating the splits, which creates a large redundancy when only the test set needs to be considered. Transforming the images (from filenames to resized and scaled tensors) remains a slow, perhaps even the slowest step, in the whole process though.
+To get this average size in the DataLoader._get_avg_size function, I would originally open the images in a separate list first, then get the average size, and resize them. However, as PIL doesn't close images' files until their data has been read (for example after calling the .size method), this caused a problem of having too many opened files as the training data increased. So in the current version, the images are opened twice: once to get their size (DataLoader._get_avg_size), and then once again to resize them (OCRData._resize_img). Though most files are opened twice now, resizing and scaling (OCRData._transform_data) is only applied to images as needed (only training or only test set); in contrast the earlier version used to always transform the entire dataset before creating the splits, which creates a large redundancy when only the test set needs to be considered. Transforming the images (from filenames to resized and scaled tensors) remains a slow, perhaps even the slowest step, in the whole process though. Training epochs in return became sufficiently fast.
 
 In general, the while functionality of being able to train a model during the test script execution, if no pre-trained model is loaded/found, may not have been expected and lead me to quite some redesigning all over the scripts (separate OCRData class, some 'mode' keyword arguments, get_model, get_new_train_specs, and init_train functions). But I found it quite handy for hyperparameter tuning and  easy re-running of experiments in general without saving tons of models. The interactive option for specifying new parameters from the test script execution is probably not the most sophisticated solution (and is not proofed for invalid inputs), but aided my workflow in the end a lot.
 
