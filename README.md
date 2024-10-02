@@ -77,7 +77,7 @@ The following arguments are optional. --loadfile specifies where to find the pre
 
 ### Dataloader
 
-Contains DataLoade, OCRData and OCRModel classes, the former two are used to filter relevant files from source directory and transforming the data to the required format for both training and testing. The latter is a blueprint for the CNN model. File has no main function.
+Contains DataLoader, OCRData and OCRModel classes, the former two are used to filter relevant files from source directory and transforming the data to the required format for both training and testing. The latter is a blueprint for the CNN model. File has no main function.
 
 ___
 
