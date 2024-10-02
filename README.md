@@ -105,9 +105,9 @@ Overview of measures across classes:
 | 75%       | 1.00   | 1.00     | 0.98 |
 | max       | 1.00   | 1.00     | 1.00 |
 
-Overview of 5 worst performing classes per measure:
+Overview of 5 worst performing classes per measure:  
 
-Precision
+Precision  
 | Character | Score |
 | --- | --- |
 | า    |      0.62 |
