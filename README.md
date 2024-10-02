@@ -31,7 +31,7 @@ ___
 > {'languages': ['Thai'], 'dpis': ['200'], 'fonts': ['normal']}  
 > (y/n) >> y  
 
-> Keep default params for epochs (20) | batch_size (128) | learning rate (0.0025)?  
+> Keep defaults for epochs (20) | batch_size (128) | learning rate (0.0025)?  
 > (y/n) >> y  
 
 ___
@@ -50,11 +50,11 @@ The following arguments are required and determine which files will be extracted
 The following arguments are optional. The first two alter behaviour during the training loop. --savefile allows the trained model to be saved under the passed filename/path. The final argument may be used to specify a different directory to read the source data from.
 * --epochs (-ep):	any integer, defaults to 10
 * --batch_size (-bs):	any integer, defaults to 128
-* --learning_rate (-lr) float between 0-1, defaults to 0.0025
+* --learning_rate (-lr): float between 0-1, defaults to 0.0025
 * --savefile (-s):	any filename/path, defaults to None
 * --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
 
-Example execution:  
+#### Example execution:  
 > $ python3 train_ML2A1.py -lg Thai English -dpi 200 300 -ft italic -ep 8 -bs 64 -s ThaiEn_200300_ita_custom -srcd [custom/path/to/OCR/data]
 
 
@@ -72,7 +72,7 @@ The following arguments are optional. --loadfile specifies where to find the pre
 * --verbose (-v):	on/off flag
 * --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
 
-Example execution:  
+#### Example execution:  
 > $ python3-s test_ML2A1.py -lg Thai -dpi 400 -ft bold -ld ThaiEn_200300_ita_custom -v -srcd [custom/path/to/OCR/data]
 
 ### Dataloader
