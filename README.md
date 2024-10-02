@@ -10,7 +10,7 @@ ___
 
 ### Running train_ML2A1.py:
 
-(1) Train a new model, optional: -s [file/pathname], save model to file.  
+(1) Train a new model and save model to file (optional).  
 > $ python3 train_ML2A1.py -lg Thai -dpi 200 -ft normal -s Thai200normal_model
 
 ### Running test_ML2A1.py:
@@ -18,9 +18,9 @@ ___
 (1) Test a pre-trained model loaded from file.
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -ld Thai200normal_model
 
-(2) Train & test a new model on the same data specifications in succession, save to file.  
+(2) Train & test a new model on the same data specifications in succession, save to file (optional).  
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal  
->
+
 > No model loaded, train new model?  
 > (y/n) >> y  
 >
@@ -40,19 +40,19 @@ ___
 
 ### Training a model with train_ML2A1.py
 
-To train a new model, run the train script and specify what data to use from the training repository. This file also contains the NN model architecture.
+To train a new model, run the train script and specify what data from the source repository to train on. This file also contains the NN model architecture.
 
-The following arguments are required and determine which files will be extracted from the source directory to use during training. They can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
+The following arguments are required and determine which files will be extracted from the source directory as training data. They can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
 * --languages (-lg):	Thai | English | Thai English
 * --dpis (-dpi): 	200 | 300 | 400 | ...
 * --fonts (-ft):	normal | bold | italic | bold_italic | ...
 
-The following arguments are optional. The first two alter behaviour during the training loop. --savefile allows the trained model to be saved under the passed filename/path. The final argument may be used to specify a different directory to read the source data from.
-* --epochs (-ep):	any integer, defaults to 10
+The following arguments are optional. --epochs, --batch_size, and --learning_rate alter behaviour during the training loop. --savefile allows the trained model to be saved under the passed filename/path. Finally, --soucre_dir may be used to specify a different directory to read the data from.
+* --epochs (-ep):	any integer, defaults to 20
 * --batch_size (-bs):	any integer, defaults to 128
 * --learning_rate (-lr): float between 0-1, defaults to 0.0025
 * --savefile (-s):	any filename/path, defaults to None
-* --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
+* --source_dir (-srcd):	pathname to directory for OCR data, on GPU defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/', on CPU defaults to './ThaiOCR/ThaiOCR-TrainigSet/'
 
 #### Example execution:  
 > $ python3 train_ML2A1.py -lg Thai English -dpi 200 300 -ft italic -ep 8 -bs 64 -s ThaiEn_200300_ita_custom -srcd [custom/path/to/OCR/data]
@@ -67,13 +67,13 @@ The following arguments are required and determine which files will be extracted
 * --dpis (-dpi): 	200 | 300 | 400 | ...
 * --fonts (-ft):	normal | bold | italic | bold_italic | ...
 
-The following arguments are optional. --loadfile specifies where to find the pre-trained model, if invalid/left unspecified, the test script allows the user to specify information to train a new model using the train script. --verbose increases the amount of detail printed during model evaluation. The final argument may be used to specify a different directory to read the source data from.
-* --loadfile (-ld):		any filename/path, defaults to None
+The following arguments are optional. --loadfile specifies where to find the pre-trained model, if invalid/left unspecified, the test script allows the user to specify information to train a new model using the train script. --verbose increases the amount of detail printed during model evaluation. The final argument may be used to specify a different directory to read the data from.
+* --loadfile (-ld):	any filename/path, defaults to None
 * --verbose (-v):	on/off flag
-* --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
+* --source_dir (-srcd):	pathname to directory for OCR data, on GPU defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/', on CPU defaults to './ThaiOCR/ThaiOCR-TrainigSet/'
 
 #### Example execution:  
-> $ python3-s test_ML2A1.py -lg Thai -dpi 400 -ft bold -ld ThaiEn_200300_ita_custom -v -srcd [custom/path/to/OCR/data]
+> $ python3-s test_ML2A1.py -lg Thai -dpi 300 -ft normal bold -ld ThaiEn_200300_ita_custom -v -srcd [custom/path/to/OCR/data]
 
 ### Dataloader
 
@@ -95,14 +95,15 @@ Overall accuracy: 0.92
 
 Overview of measures across classes:
 
-      Precision  Recall  F1-score
-mean       0.92    0.92      0.92
-std        0.10    0.11      0.09
-min        0.62    0.47      0.58
-25%        0.88    0.88      0.86
-50%        0.94    0.95      0.95
-75%        1.00    1.00      0.98
-max        1.00    1.00      1.00
+| 1 | Precision | Recall | F1-score |
+| --------- | ------ | -------- | --- |
+| mean      | 0.92   | 0.92     | 0.92 |
+| std       | 0.10   | 0.11     | 0.09 |
+| min       | 0.62   | 0.47     | 0.58 |
+| 25%       | 0.88   | 0.88     | 0.86 |
+| 50%       | 0.94   | 0.95     | 0.95 |
+| 75%       | 1.00   | 1.00     | 0.98 |
+| max       | 1.00   | 1.00     | 1.00 |
 
 Overview of 5 worst performing classes per measure:
 

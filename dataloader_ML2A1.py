@@ -21,6 +21,9 @@ def parse_input_args(mode='train'):
                         help='DPI formats to train on. 200 | 300 | 400')
     parser.add_argument('-ft', '--fonts', nargs='+', required=False,
                         help='Fonts to train on. normal|bold|italic|bold_italic')
+    # Optional
+    parser.add_argument('-srcd', '--source_dir', help='Pass a custom source'
+                        + ' directory pointing to image data.')
 
     if mode=='train':
         # Optional for train script.
@@ -32,20 +35,14 @@ def parse_input_args(mode='train'):
                             help='Learning rate to use during training. 0-1')
         parser.add_argument('-s', '--savefile', default=None,
                             help='Enable saving of model, specify filename/path.')
-        parser.add_argument('-srcd', '--source_dir',
-                            default='/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/',
-                            help='Pass a custom source directory pointing to image data.')
 
     else:
         # Optional for test script.
         parser.add_argument('-ld', '--loadfile', default=None,
-                            help='Specify filename/path to load pretrained model from.')
+                            help='Filename/path to load pretrained model from.')
         parser.add_argument('-v', '--verbose', action='store_true',
                             help='Pass to receive per-class evaluation metrics '
                             + 'and lowest performing classes')
-        parser.add_argument('-srcd', '--source_dir',
-                            default='/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/',
-                            help='Pass a custom source directory to read image data from.')
 
         return parser
 
