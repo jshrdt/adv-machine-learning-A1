@@ -39,7 +39,7 @@ def get_model(loadfile: str, test_specs: dict) -> OCRModel:
 
             # Get info on params for training loop.
             if input('\nKeep defaults for epochs (20) | batch_size (128) | '
-                    + 'learningrate (0.0025)?\n(y/n) >> ') == 'y':
+                    + 'learning rate (0.0025)?\n(y/n) >> ') == 'y':
                 m, test_data = init_train(src_dir, train_specs, device,
                                           savefile=save, mode='test')
             else:

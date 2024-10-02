@@ -6,7 +6,7 @@
 
 #### Note
 
-'>>' indicates interactive terminal menu waiting for user input, example input is included below. Inputs are not proofed for exceptions, expected format is given in this file and on execution.
+* '>>' indicates interactive terminal menu waiting for user input, example input is included below. Inputs are not proofed for exceptions, expected format is given in this file and on execution.
 
 ___
 
@@ -51,7 +51,7 @@ The following arguments are required and determine which files will be extracted
 * --dpis (-dpi): 	200 | 300 | 400 | ...
 * --fonts (-ft):	normal | bold | italic | bold_italic | ...
 
-The following arguments are optional. --epochs, --batch_size, and --learning_rate alter behaviour during the training loop. --savefile allows the trained model to be saved under the passed filename/path. Finally, --soucre_dir may be used to specify a different directory to read the data from.
+The following arguments are optional. --epochs, --batch_size, and --learning_rate alter behaviour during the training loop. --savefile allows the trained model to be saved under the passed filename/path. Finally, --source_dir may be used to specify a different directory to read the data from.
 * --epochs (-ep):	any integer, defaults to 20
 * --batch_size (-bs):	any integer, defaults to 128
 * --learning_rate (-lr): float between 0-1, defaults to 0.0025
@@ -59,6 +59,7 @@ The following arguments are optional. --epochs, --batch_size, and --learning_rat
 * --source_dir (-srcd):	pathname to directory for OCR data, on GPU defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/', on CPU defaults to './ThaiOCR/ThaiOCR-TrainigSet/'
 
 #### Example execution:  
+* Train new model, change default params, save new model to file
 > $ python3 train_ML2A1.py -lg Thai English -dpi 200 300 -ft italic -ep 8 -bs 64 -lr 0.005 -s ThaiEn_200300_ita
 
 
@@ -71,7 +72,7 @@ The following arguments are required and determine which files will be extracted
 * --dpis (-dpi): 	200 | 300 | 400 | ...
 * --fonts (-ft):	normal | bold | italic | bold_italic | ...
 
-The following arguments are optional. --loadfile specifies where to find the pre-trained model, if invalid/left unspecified, the test script allows the user to specify information to train a new model using the train script. --verbose increases the amount of detail printed during model evaluation. The final argument may be used to specify a different directory to read the data from.
+The following arguments are optional. --loadfile specifies where to find the pre-trained model, if invalid/left unspecified, the test script allows the user to specify information to train a new model using the train script. --verbose increases the amount of detail printed during model evaluation. Finally, --source_dir may be used to specify a different directory to read the data from.
 * --loadfile (-ld):	any filename/path, defaults to None
 * --verbose (-v):	on/off flag
 * --source_dir (-srcd):	pathname to directory for OCR data, on GPU defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/', on CPU defaults to './ThaiOCR/ThaiOCR-TrainigSet/'
@@ -93,7 +94,7 @@ The following arguments are optional. --loadfile specifies where to find the pre
 > {'languages': ['Thai'], 'dpis': ['400'], 'fonts': ['normal', 'bold']}  
 > (y/n) >> y
 > 
-> Keep defaults for epochs (20) | batch_size (128) | learningrate (0.0025)?  
+> Keep defaults for epochs (20) | batch_size (128) | learning rate (0.0025)?  
 > (y/n) >> y
 
 * With new model trained from scratch, different specifications (Thai+English, 300dpi, normal+italic), different params, not saved
@@ -113,18 +114,18 @@ The following arguments are optional. --loadfile specifies where to find the pre
 > Enter single number, or combination (e.g. 1 -> English; 12 -> English+Thai).
 > 
 > Train on which language(s)?  
-> {'1': 'English', '2': 'Thai'}. 
+> {'1': 'English', '2': 'Thai'}  
 > (int) >> 12
 > 
 > Train on which resolution(s)?  
-> {'1': '200', '2': '300', '3': '400'}. 
+> {'1': '200', '2': '300', '3': '400'}  
 > (int) >> 2
 > 
 > Train on which font(s)?  
 > {'1': 'normal', '2': 'bold', '3': 'italic', '4': 'bold_italic'}  
 > (int) >> 13
 > 
-> Keep defaults for epochs (20) | batch_size (128) | learningrate (0.0025)?  
+> Keep defaults for epochs (20) | batch_size (128) | learning rate (0.0025)?  
 > (y/n) >> n
 > 
 > Number of epochs:  
@@ -155,7 +156,7 @@ To get this average size in the DataLoader._get_avg_size function, I would origi
 
 In general, the while functionality of being able to train a model during the test script execution, if no pre-trained model is loaded/found, may not have been expected and lead me to quite some redesigning all over the scripts (separate OCRData class, some 'mode' keyword arguments, get_model, get_new_train_specs, and init_train functions). But I found it quite handy for hyperparameter tuning and  easy re-running of experiments in general without saving tons of models. The interactive option for specifying new parameters from the test script execution is probably not the most sophisticated solution (and is not proofed for invalid inputs), but aided my workflow in the end a lot.
 
-As for the use of the argument parser: I simply wrote it before we looked at using a json config file in class and by that point I had integrated it with the interactive design which seemed to suit it well.
+As for the extent of using the argument parser: I simply wrote it before we looked at using a json config file in class and by that point I had integrated it with the interactive design which seemed to suit it well.
 
 Finally, after tuning the hidden size and activation function, the adjustment of the batch size and learning rate brought significant improvement across all model performances by around +5-10%.
 
@@ -171,7 +172,7 @@ ___
 
 ## Experiments
 
-1) Thai normal text, 200dpi -> Thai normal text, 200dpi
+1) Thai normal text, 200dpi –> Thai normal text, 200dpi
 
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -v  
 
@@ -201,7 +202,7 @@ Overview of 5 worst performing classes per measure:
 
 ___
 
-2) Thai normal 400 -> Thai normal 200
+2) Thai normal 400 –> Thai normal 200
 
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -v
 
@@ -223,7 +224,7 @@ Overview of 5 worst performing classes per measure:
 
 | Precision | | Recall | | F1-Score | |
 | --- | ---| --- | ---- | ---  | --- |
-| อ่ |  0.62 |อึ  |  0.64] อ่  |  0.73 |
+| อ่ |  0.62 |อึ  |  0.64| อ่  |  0.73 |
 | ๅ | 0.64 |า  |   0.65 | า  |   0.74 |
 | สี(ติด)| 0.67 | ด  |   0.69 | ซ  |   0.74 | 
 | ต    | 0.67 |ฏ   |  0.71 | ๅ  |   0.75 |
@@ -231,7 +232,7 @@ Overview of 5 worst performing classes per measure:
 
 ___
 
-3) Thai normal 400 - Thai bold 400
+3) Thai normal 400 –> Thai bold 400
 
 > $ python3 test_ML2A1.py -lg Thai -dpi 400 -ft bold -v -ld Thai400normal
 
@@ -261,7 +262,7 @@ Overview of 5 worst performing classes per measure:
 
 ___
 
-4) Thai bold -> Thai normal
+4) Thai bold –> Thai normal
 
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 300 400 -ft normal -v
 
@@ -291,7 +292,7 @@ Overview of 5 worst performing classes per measure:
 
 ___
 
-5) All Thai -> All Thai
+5) All Thai –> All Thai
 
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 300 400 -ft normal bold italic bold_italic -v
 
@@ -321,7 +322,7 @@ Overview of 5 worst performing classes per measure:
 
 ___
 
-6) Thai & English normal -> Thai & English normal
+6) Thai & English normal –> Thai & English normal
 
 > $ python3 test_ML2A1.py -lg English Thai -dpi 200 300 400 -ft normal -v
 
@@ -352,7 +353,7 @@ Overview of 5 worst performing classes per measure:
 ___
 
 
-7) All styles -> All styles
+7) All styles –> All styles
 
 > $ python3 test_ML2A1.py -lg English Thai -dpi 200 300 400 -ft normal italic bold bold_italic -v
 
@@ -411,9 +412,9 @@ Overview of 5 worst performing classes per measure:
 |o   | 0.67|O |   0.57|O    |0.65|
 |x    |0.73|X|    0.69|w    |0.67|
 
-As to be expected, the model struggles to tell characters apart which are similar in their upper- vs lowercase formats (e.g. W-w, O-o). From the evaluation above the model appears to begin favouring either one of the classes: Higher precision for o/w are accompanied by low recall for their uppercase equivalent. A similar issue emerges for i and l; some sections in the data seem to stem from fonts with serifs, which might aid classification for some cases, for example capital I. Assuming the source data is sorted correctly, a look at the English/105/200 ('i') and English/108/200 ('l') shows that the dot above the i – which I would have assumed must enable the model to distinguish this form from the more similar l/I – is hardly ever preserved at all, further conflating these two forms. This pattern seems to be present across all resolutions, so it is possible this is an issue with the original cropping of letters, which appears to have cut off the i dots. Making this issue similar to the upper- vs lowercase problem.
+As to be expected, the model struggles to tell characters apart which are similar in their upper- vs lowercase formats (e.g. W-w, O-o). From the evaluation above the model appears to begin favouring either one of the classes: Higher precision for o/w are accompanied by low recall for their uppercase equivalent. A similar issue emerges for lowercase i and lowercase L; some sections in the data seem to stem from fonts with serifs, which might aid classification for some cases, for example capital I. Assuming the source data is sorted correctly, a look at the English/105/200 ('i') and English/108/200 ('l') shows that the dot above the i – which I would have assumed must enable the model to distinguish this form from the more similar l/I at times (ironically in GitHub these look identical, lowercase L / uppercase i for clarity) – is hardly ever preserved at all, further conflating these two forms. This pattern seems to be present across all resolutions, so it is possible this is an issue with the original cropping of letters, which appears to have cut off the i dots. Making this issue similar to the upper- vs lowercase problem.
 
-* English 300 –> English 300 
+* English 300 normal –> English 300 normal
 > $ python3 test_ML2A1.py -lg English -dpi 300 -ft normal -v
 
 Overall accuracy: 0.96
@@ -440,11 +441,11 @@ Overview of 5 worst performing classes per measure:
 |l   | 0.84|W |   0.81|V   | 0.84|
 |o    |0.89|.|    0.84|v    |0.86|
 
-Increasing the resolution to 300dpi brings in a couple of points int he overall accuracy, but what's more is that the scores for the lowest performing classes visibly rises with the minimal F1-score across all classes going from 0.43 to 0.66 (lowercase i in both cases). The precision score for lowercase l also suggests that even without the i-dot, the model is able to recognise this character on a more-than-chance basis by proportions alone, given a high enough (here: >200 dpi) resolution.
+Increasing the resolution to 300dpi brings in a couple of points int he overall accuracy, but what's more is that the scores for the lowest performing classes visibly rises with the minimal F1-score across all classes going from 0.43 to 0.66 (lowercase i in both cases). The precision score for lowercase L also suggests that even without the i-dot, the model is able to recognise this character on a more-than-chance basis by proportions alone, given a high enough (here: >200 dpi) resolution.
 
-Scores for W-w and O-o also rise; though most of them are still represented in the bottom 5 in at least one category, scores above 0.8 are promising. Lastly, as suspected above, uppercase I also belongs to this group of lower performing characters.
+Scores for W-w and O-o also rise; though most of them are still represented in the bottom 5 in at least one category, scores above 0.8 are promising. Lastly, as suspected above, uppercase i also belongs to this group of lower performing characters.
 
-Training and testing on different fonts (normal->bold, both 200dpi, overall accuracy 0.83) exacerbates these issues (upper- vs lowercase similarity, l/i/I case) even more with the bottom 5 cases for each measure staying below 0.6 and the lowest per-class measure being F1-Score for l (0.17).
+Training and testing on different fonts (normal->bold, both 200dpi, overall accuracy 0.83) exacerbates these issues (upper- vs lowercase similarity, lower L/i/upper i case) even more with the bottom 5 cases for each measure staying below 0.6 and the lowest per-class measure being F1-Score for lower L (0.17).
 
 ___ 
 
