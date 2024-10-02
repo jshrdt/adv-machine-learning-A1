@@ -10,7 +10,9 @@ from train_ML2A1 import init_train
 
 
 def get_model(loadfile: str, test_specs: dict) -> OCRModel:
-    """Return model to be tested. Loaded from file or newly trained."""
+    """Return model to be tested and test set from training specs.
+    Loaded model from file or train from scratch according to user input.
+    """
     keep_dataset = None
     # Load model, get test data according to specs.
     if loadfile:
@@ -84,13 +86,13 @@ def get_new_train_specs() -> dict:
 
 def test(data: DataLoader, model: OCRModel, device: torch.device) -> \
         tuple[list, list]:
-    """Test model on data, return model predictions and gold labels."""
+    """Return model predictions and gold labels for test data."""
     # Transform test data.
-    print('Transforming test data...')
+    print('\nTransforming test data...')
     test_data = OCRData(data.test, device, size_to=model.img_dims).transformed
 
     # Make predictions & extract gold labels. Both converted to single character.
-    print('Testing model...')
+    print('Testing model...\n')
     X = test_data['imgs']
     y_true = [data.idx_to_char(label.cpu()) for label in test_data['labels']]
     y_preds = list()
@@ -100,8 +102,9 @@ def test(data: DataLoader, model: OCRModel, device: torch.device) -> \
     return y_preds, y_true
 
 
-def evaluate(y_preds: list, y_true: list, verbose: bool=False):
-    """Evaluate and print model's performance."""
+def evaluate(y_preds: list, y_true: list):
+    """Evaluate and return model's performance in terms of accuracy,
+    precision, recall, and F1-score."""
     # Set of predicted labels.
     pred_labels = list(set(y_true))
     # Get precision, recall, f1, and overall accuracy measures.
@@ -111,29 +114,7 @@ def evaluate(y_preds: list, y_true: list, verbose: bool=False):
     f1 = f1_score(y_true, y_preds, labels=pred_labels, average=None)
     accuracy = accuracy_score(y_true, y_preds)
 
-    # Sort measures into df, calculate macros.
-    measures = ['Precision', 'Recall', 'F1-score']
-    evals = pd.DataFrame((precision, recall, f1), index=measures,
-                         columns=pred_labels).transpose()
-    # Print evaluation.
-    print('\n', '-'*80)
-    print('Evaluation')
-    print('\nOverall accuracy:', round(accuracy, 2))
-
-    if verbose:
-        # Details on per-class measures.
-        print('\nOverview of measures across classes:\n')
-        print(evals.describe().round(2).iloc[1:])
-
-        print('\nOverview of 5 worst performing classes per measure:')
-        for measure in measures:
-            print()
-            print(measure)
-            print(evals[measure].sort_values()[:5].round(2))
-
-    else:
-        print('\nMean performances across all classes:\n')
-        print(evals.describe().loc['mean'])
+    return accuracy, precision, recall, f1, pred_labels
 
 
 if __name__=="__main__":
@@ -155,10 +136,35 @@ if __name__=="__main__":
 
     # Get test data, test & evaluate model.
     if keep_dataset:
+        # Test on same specifications as new model was trained on.
         test_data = train_specs_dataset
     else:
+        # Load new test set.
         print('\nSelecting files for testing:', specs)
         test_data = DataLoader(src_dir, specs)
-
+    # Test & evaluate model.
     preds, gold = test(test_data, model.eval(), device)
-    evaluate(preds, gold, verbose=args.verbose)
+    accuracy, precision, recall, f1, pred_labels = evaluate(preds, gold)
+
+    # Sort measures into df, calculate macros.
+    measures = ['Precision', 'Recall', 'F1-score']
+    evals = pd.DataFrame((precision, recall, f1), index=measures,
+                         columns=pred_labels).transpose()
+
+    # Print mdel evaluation
+    print('\n', '-'*80)
+    print('Evaluation')
+    print('\nOverall accuracy:', round(accuracy, 2))
+
+    if args.verbose:
+        # Details on per-class measures.
+        print('\nOverview of measures across classes:\n')
+        print(evals.describe().round(2).iloc[1:])
+        print('\nOverview of 5 worst performing classes per measure:')
+        for measure in measures:
+            print()
+            print(measure)
+            print(evals[measure].sort_values()[:5].round(2))
+    else:
+        print('\nMean performances across all classes:\n')
+        print(evals.describe().loc['mean'])

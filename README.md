@@ -132,7 +132,7 @@ The following arguments are optional. --loadfile specifies where to find the pre
 > (None|int) >> 15
 > 
 > Size of batches:  
-> (None|int) >> 64
+> (None|int) >>
 > 
 > Learning rate:  
 > (None|float) >> 0.003
@@ -140,7 +140,7 @@ The following arguments are optional. --loadfile specifies where to find the pre
 
 ### Dataloader
 
-Contains DataLoader, OCRData, and OCRModel classes, as well as ArgumentParser details. The former two are used to filter relevant files from source directory and transforming the data to the required format for both training and testing. OCRModel latter is a blueprint for the CNN model. File has no main function.
+Contains DataLoader, OCRData, and OCRModel classes, as well as ArgumentParser details. The former two are used to filter relevant files from source directory and transforming the data to the required format for both training and testing. OCRModel is a blueprint for the CNN model. File has no main function.
 
 ___
 
@@ -148,7 +148,7 @@ ___
 
 ### Data loading and overall structure
 
-In general I did quite a bit of restructuring as time went on, because I wanted to minimise the amount of iterations over the datasets and ended up creating two classes to handle data loading/preparation. While a list of filenames and gold labels is always created, shuffled, and split for the entire dataset matching given input specifications (language, dpi, fonts), actual reading and processing of those images only occurs as needed: For training only the field in the training_data split are read, and likewise is the case for the testing split and the test script. Additionally, when the test script is used to both train and test a new model from scratch, if the data specifications are shared across training & testing data, walking the source directory and filtering out relevant filenames is only done once.
+In general I did quite a bit of restructuring as time went on, because I wanted to minimise the amount of iterations over the datasets and ended up creating two classes to handle data loading/preparation. While a list of filenames and gold labels is always created, shuffled, and split for the entire dataset matching given input specifications (languages, dpi, fonts), actual reading and processing of those images only occurs as needed: For training only the field in the training_data split are read, and likewise is the case for the testing split and the test script. Additionally, when the test script is used to both train and test a new model from scratch, if the data specifications are shared across training & testing data, walking the source directory and filtering out relevant filenames is only done once.
 
 To ensure uniform input shapes across images (and resolutions), I decided to use the resize method for PIL Image objects and to resize to the average image size across all images for the given training specifications (i.e. all images for Thai-200dpi-normal). By storing this size as an attribute in OCRModel.img_dims, it became easily available to allow for appropriate resizing when testing a pre-trained model as well.
 
@@ -385,7 +385,7 @@ ___
 
 ### Other
 
-* English 200 normal –> English 200 normal. 
+* English 200 normal –> English 200 normal  
 > $ python3 test_ML2A1.py -lg English -dpi 200 -ft normal -v
 
 Overall accuracy: 0.92
@@ -412,7 +412,7 @@ Overview of 5 worst performing classes per measure:
 |o   | 0.67|O |   0.57|O    |0.65|
 |x    |0.73|X|    0.69|w    |0.67|
 
-As to be expected, the model struggles to tell characters apart which are similar in their upper- vs lowercase formats (e.g. W-w, O-o). From the evaluation above the model appears to begin favouring either one of the classes: Higher precision for o/w are accompanied by low recall for their uppercase equivalent. A similar issue emerges for lowercase i and lowercase L; some sections in the data seem to stem from fonts with serifs, which might aid classification for some cases, for example capital I. Assuming the source data is sorted correctly, a look at the English/105/200 ('i') and English/108/200 ('l') shows that the dot above the i – which I would have assumed must enable the model to distinguish this form from the more similar l/I at times (ironically in GitHub these look identical, lowercase L / uppercase i for clarity) – is hardly ever preserved at all, further conflating these two forms. This pattern seems to be present across all resolutions, so it is possible this is an issue with the original cropping of letters, which appears to have cut off the i dots. Making this issue similar to the upper- vs lowercase problem.
+As to be expected, the model struggles to tell characters apart which are similar in their upper- vs lowercase formats (e.g. W-w, O-o). From the evaluation above the model appears to begin favouring either one of the classes: Higher precision for o/w are accompanied by low recall for their uppercase equivalent. A similar issue emerges for lowercase i and lowercase L; some sections in the data seem to stem from fonts with serifs, which might aid classification for some cases, for example capital I. Assuming the source data is sorted correctly, a look at the English/105/200 ('i') and English/108/200 ('l') shows that the dot above the i – which I would have assumed must enable the model to distinguish this form from the more similar l/I at times (ironically on GitHub these look identical, lowercase L / uppercase i for clarity) – is hardly ever preserved at all, further conflating these two forms. This pattern seems to be present across all resolutions, so it is possible this is an issue with the original cropping of letters, which appears to have cut off the i dots. Making this issue similar to the upper- vs lowercase problem within one character type.
 
 * English 300 normal –> English 300 normal
 > $ python3 test_ML2A1.py -lg English -dpi 300 -ft normal -v
