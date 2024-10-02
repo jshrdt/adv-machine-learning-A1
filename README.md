@@ -95,41 +95,41 @@ The following arguments are optional. --loadfile specifies where to find the pre
 * With new model trained from scratch, different specifications (Thai+English, 300dpi, normal+italic), different params, not saved
 > $ python3 test_ML2A1.py -lg Thai -dpi 400 -ft bold -v   
 
-> No model loaded, train new model?
+> No model loaded, train new model?  
 > (y/n) >> y
 > 
-> File/pathname to save model to:
+> File/pathname to save model to:  
 > (None|str) >> 
 > 
-> Train new model on same specifications as test data?
-> {'languages': ['Thai'], 'dpis': ['400'], 'fonts': ['bold']}
+> Train new model on same specifications as test data?  
+> {'languages': ['Thai'], 'dpis': ['400'], 'fonts': ['bold']}  
 > (y/n) >> n
 > 
-> Choose specifications for training data.
+> Choose specifications for training data.  
 > Enter single number, or combination (e.g. 1 -> English; 12 -> English+Thai).
 > 
-> Train on which language(s)?
-> {'1': 'English', '2': 'Thai'}
+> Train on which language(s)?  
+> {'1': 'English', '2': 'Thai'}. 
 > >> 12
 > 
-> Train on which resolution(s)?
-> {'1': '200', '2': '300', '3': '400'}
+> Train on which resolution(s)?  
+> {'1': '200', '2': '300', '3': '400'}. 
 > >> 2
 > 
-> Train on which font(s)?
-> {'1': 'normal', '2': 'bold', '3': 'italic', '4': 'bold_italic'}
+> Train on which font(s)?  
+> {'1': 'normal', '2': 'bold', '3': 'italic', '4': 'bold_italic'}  
 > >> 13
 > 
-> Keep defaults for epochs (20) | batch_size (128) | learningrate (0.0025)?
+> Keep defaults for epochs (20) | batch_size (128) | learningrate (0.0025)?  
 > (y/n) >> n
 > 
-> Number of epochs:
+> Number of epochs:  
 > (None|int) >> 15
 > 
-> Size of batches:
+> Size of batches:  
 > (None|int) >> 64
 > 
-> Learning rate:
+> Learning rate:  
 > (None|float) >> 0.003
 
 
