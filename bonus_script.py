@@ -148,6 +148,3 @@ if __name__=="__main__":
         gold_txt.append(block_gold)
     for gold in gold_txt:
         print(gold)
-    
-    # TBD train model on numeric+special character data from trainig set as well
-        
