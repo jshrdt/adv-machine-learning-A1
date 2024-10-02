@@ -105,21 +105,15 @@ Overview of measures across classes:
 | 75%       | 1.00   | 1.00     | 0.98 |
 | max       | 1.00   | 1.00     | 1.00 |
 
-Overview of 5 worst performing classes per measure:
+Overview of 5 worst performing classes per measure:  
 
 | Precision | Recall | F1-Score |
 | ------ | ------  | ------ |
-| 0.62  | 0.47 | 0.58  |  
-
-
 | า 0.62  | อ์ไ(ติด) 0.47 | ซ 0.58  |
 | ซ 0.64  | ซ 0.53  | อ์ไ(ติด) 0.59 |
 | อี่(ติด) 0.66 | ๅ 0.55  | ๅ 0.63 |
 | สี(ติด) 0.67 | อื 0.67  | า 0.70 |
-| ช 0.70  | อึ่(ติด) 0.71  | อื 0.78  |
-
-
-
+| ช 0.70  | อึ่(ติด) 0.71  | อื 0.78|
 
 ___
 
@@ -134,40 +128,26 @@ Overall accuracy: 0.93
 
 Overview of measures across classes:
 
-      Precision  Recall  F1-score
-mean       0.94    0.93      0.93
-std        0.09    0.08      0.07
-min        0.62    0.64      0.73
-25%        0.90    0.90      0.90
-50%        1.00    0.95      0.96
-75%        1.00    1.00      0.98
-max        1.00    1.00      1.00
+|           | Precision | Recall | F1-score |
+| --------- | ------ | -------- | --- |
+| mean  |     0.94 |   0.93 |      0.93|
+| std   |     0.09 |   0.08 |     0.07|
+| min   |     0.62 |   0.64 |     0.73|
+| 25%   |     0.90 |   0.90 |     0.90|
+| 50%   |     1.00 |   0.95 |     0.96|
+| 75%   |     1.00 |   1.00 |     0.98|
+| max   |     1.00 |   1.00 |      1.00|
 
 Overview of 5 worst performing classes per measure:
 
-Precision
-อ่         0.62
-ๅ          0.64
-สี(ติด)    0.67
-ต          0.67
-ซ          0.72
-Name: Precision, dtype: float64
+| Precision | Recall | F1-Score |
+| ------ | ------  | ------ |
+| อ่  0.62 |อึ    0.64] อ่    0.73 |
+| ๅ  0.64 |า     0.65 | า     0.74 |
+| สี(ติด) 0.67 | ด     0.69 | ซ     0.74 | 
+| ต     0.67 |ฏ     0.71 | ๅ     0.75 |
+| ซ     0.72 | ฃ     0.71 | ฃ     0.77 |
 
-Recall
-อึ    0.64
-า     0.65
-ด     0.69
-ฏ     0.71
-ฃ     0.71
-Name: Recall, dtype: float64
-
-F1-score
-อ่    0.73
-า     0.74
-ซ     0.74
-ๅ     0.75
-ฃ     0.77
-Name: F1-score, dtype: float64
 
 ___
 
@@ -182,40 +162,25 @@ Overall accuracy: 0.93
 
 Overview of measures across classes:
 
-      Precision  Recall  F1-score
-mean       0.93    0.92      0.92
-std        0.11    0.13      0.11
-min        0.50    0.33      0.50
-25%        0.90    0.89      0.89
-50%        1.00    0.96      0.96
-75%        1.00    1.00      1.00
-max        1.00    1.00      1.00
+| | Precision | Recall | F1-score |
+| --- | --- | --- | --- |
+| mean|       0.93 |    0.92 |     0.92 |
+| std |       0.11 |   0.13  |    0.11 |
+| min |       0.50 |   0.33  |    0.50 |
+| 25% |       0.90 |   0.89  |    0.89 |
+| 50% |       1.00 |   0.96  |    0.96 |
+| 75% |       1.00 |   1.00  |    1.00 |
+| max |        1.00|    1.00 |      1.00 |
 
 Overview of 5 worst performing classes per measure:
 
-Precision
-อ์ใ(ติด)    0.50
-ต           0.50
-อึ้(ติด)    0.58
-อ้ไ(ติด)    0.65
-ท           0.65
-Name: Precision, dtype: float64
-
-Recall
-ศั(ติด)     0.33
-อ้ใ(ติด)    0.39
-อี้(ติด)    0.61
-า           0.65
-สี(ติด)     0.67
-Name: Recall, dtype: float64
-
-F1-score
-ศั(ติด)     0.50
-อ้ใ(ติด)    0.56
-อ์ใ(ติด)    0.64
-ต           0.67
-อึ้(ติด)    0.67
-Name: F1-score, dtype: float64
+| Precision | Recall | F1-Score |
+| ------ | ------  | ------ |
+|อ์ใ(ติด)    0.50|ศั(ติด)     0.33|ศั(ติด)     0.50|
+|ต           0.50|อ้ใ(ติด)    0.39|อ้ใ(ติด)    0.56|
+|อึ้(ติด)    0.58|อี้(ติด)    0.61|อ์ใ(ติด)    0.64|
+|อ้ไ(ติด)    0.65|า           0.65|ต           0.67|
+|ท           0.65|สี(ติด)     0.67|อึ้(ติด)    0.67|
 
 ___
 
@@ -230,40 +195,25 @@ Overall accuracy: 0.92
 
 Overview of measures across classes:
 
-      Precision  Recall  F1-score
-mean       0.92    0.91      0.92
-std        0.08    0.09      0.07
-min        0.61    0.63      0.73
-25%        0.88    0.87      0.88
-50%        0.94    0.94      0.93
-75%        0.99    0.97      0.96
-max        1.00    1.00      1.00
+| | Precision | Recall | F1-score |
+| --- | --- | --- | --- |
+|mean|       0.92|    0.91|      0.92|
+|std |       0.08|    0.09|      0.07|
+|min |       0.61|    0.63|      0.73|
+|25% |       0.88|    0.87|      0.88|
+|50% |       0.94|    0.94|      0.93|
+|75% |       0.99|    0.97|      0.96|
+|max |       1.00|    1.00|      1.00|
 
 Overview of 5 worst performing classes per measure:
 
-Precision
-ข           0.61
-อ์ไ(ติด)    0.71
-ๅ           0.72
-อี้(ติด)    0.73
-อ่          0.77
-Name: Precision, dtype: float64
-
-Recall
-อ์ใ(ติด)    0.63
-ฃ           0.65
-ซ           0.65
-ส้(ติด)     0.66
-า           0.66
-Name: Recall, dtype: float64
-
-F1-score
-ฃ           0.73
-ข           0.73
-า           0.73
-อ์ใ(ติด)    0.75
-ซ           0.76
-Name: F1-score, dtype: float64
+| Precision | Recall | F1-Score |
+| ------ | ------  | ------ |
+|ข           0.61|อ์ใ(ติด)    0.63|ฃ           0.73|
+|อ์ไ(ติด)    0.71|ฃ           0.65|ข           0.73|
+|ๅ           0.72|ซ           0.65|า           0.73|
+|อี้(ติด)    0.73|ส้(ติด)     0.66|อ์ใ(ติด)    0.75|
+|อ่          0.77|า           0.66|ซ           0.76|
 
 ___
 
@@ -278,40 +228,25 @@ Overall accuracy: 0.99
 
 Overview of measures across classes:
 
-      Precision  Recall  F1-score
-mean       0.99    0.99      0.99
-std        0.02    0.02      0.01
-min        0.88    0.92      0.92
-25%        0.98    0.98      0.99
-50%        0.99    0.99      0.99
-75%        1.00    1.00      1.00
-max        1.00    1.00      1.00
+| | Precision | Recall | F1-score |
+| --- | --- | --- | --- |
+|mean|       0.99|    0.99|      0.99|
+|std|        0.02|    0.02|      0.01|
+|min|        0.88|    0.92|      0.92|
+|25%|        0.98|    0.98|      0.99|
+|50%|        0.99|    0.99|      0.99|
+|75%|        1.00|    1.00|      1.00|
+|max|        1.00|    1.00|      1.00|
 
 Overview of 5 worst performing classes per measure:
 
-Precision
-อ่          0.88
-อำ          0.94
-า           0.94
-อื          0.95
-อึ่(ติด)    0.95
-Name: Precision, dtype: float64
-
-Recall
-อุ          0.92
-อี่(ติด)    0.94
-อำ          0.95
-ๅ           0.95
-อี          0.95
-Name: Recall, dtype: float64
-
-F1-score
-อ่    0.92
-อำ    0.94
-า     0.95
-อุ    0.96
-ๅ     0.96
-Name: F1-score, dtype: float64
+| Precision | Recall | F1-Score |
+| ------ | ------  | ------ |
+|อ่          0.88|อุ          0.92|อ่    0.92|
+|อำ          0.94|อี่(ติด)    0.94|อำ    0.94|
+|า           0.94|อำ          0.95|า     0.95|
+|อื          0.95|ๅ           0.95|อุ    0.96|
+|อึ่(ติด)    0.95|อี          0.95|ๅ     0.96|
 
 ___
 
@@ -326,40 +261,25 @@ Overall accuracy: 0.97
 
 Overview of measures across classes:
 
-      Precision  Recall  F1-score
-mean       0.97    0.97      0.97
-std        0.07    0.07      0.07
-min        0.37    0.51      0.47
-25%        0.97    0.98      0.97
-50%        0.99    0.99      0.99
-75%        1.00    1.00      1.00
-max        1.00    1.00      1.00
+| | Precision | Recall | F1-score |
+| --- | --- | --- | --- |
+|mean|       0.97|    0.97|      0.97|
+|std|        0.07|    0.07|      0.07|
+|min|        0.37|    0.51|      0.47|
+|25%|        0.97|    0.98|      0.97|
+|50%|        0.99|    0.99|      0.99|
+|75%|        1.00|    1.00|      1.00|
+|max|        1.00|    1.00|      1.00|
 
 Overview of 5 worst performing classes per measure:
 
-Precision
-l     0.37
-I     0.68
-i     0.71
-อ่    0.83
-V     0.83
-Name: Precision, dtype: float64
-
-Recall
-i     0.51
-.     0.64
-l     0.65
-อ่    0.66
-I     0.74
-Name: Recall, dtype: float64
-
-F1-score
-l     0.47
-i     0.59
-I     0.71
-อ่    0.74
-.     0.74
-Name: F1-score, dtype: float64
+| Precision | Recall | F1-Score |
+| ------ | ------  | ------ |
+|l     0.37|i     0.51|l     0.47|
+|I     0.68|.     0.64|i     0.59|
+|i     0.71|l     0.65|I     0.71|
+|อ่    0.83|อ่    0.66|อ่    0.74|
+|V     0.83|I     0.74|.     0.74|
 
 ___
 
@@ -375,40 +295,26 @@ Overall accuracy: 0.97
 
 Overview of measures across classes:
 
-      Precision  Recall  F1-score
-mean       0.97    0.97      0.97
-std        0.07    0.06      0.06
-min        0.54    0.59      0.56
-25%        0.97    0.97      0.97
-50%        0.99    0.99      0.99
-75%        1.00    1.00      1.00
-max        1.00    1.00      1.00
+| | Precision | Recall | F1-score |
+| --- | --- | --- | --- |
+|mean|       0.97|    0.97|      0.97|
+|std        |0.07    |0.06      |0.06|
+|min|        0.54|    0.59|      0.56|
+|25%        |0.97    |0.97      |0.97|
+|50%        |0.99|    0.99|      0.99|
+|75%        |1.00    |1.00      |1.00|
+|max|        1.00|    1.00|      1.00|
 
 Overview of 5 worst performing classes per measure:
 
-Precision
-l     0.54
-i     0.58
-อ่    0.73
-I     0.75
-.     0.76
-Name: Precision, dtype: float64
+| Precision | Recall | F1-Score |
+| ------ | ------  | ------ |
+|l     0.54|l     0.59|l     0.56|
+|i     0.58|i     0.65|i     0.61|
+|อ่    0.73|I     0.72|อ่    0.74|
+|I     0.75|อ่    0.74|I     0.74|
+|.     0.76|.     0.75|.     0.76|
 
-Recall
-l     0.59
-i     0.65
-I     0.72
-อ่    0.74
-.     0.75
-Name: Recall, dtype: float64
-
-F1-score
-l     0.56
-i     0.61
-อ่    0.74
-I     0.74
-.     0.76
-Name: F1-score, dtype: float64
 ___
 
 ### Other
@@ -477,6 +383,14 @@ min        0.52    0.46      0.52
 max        1.00    1.00      1.00
 
 Overview of 5 worst performing classes per measure:
+
+| Precision | Recall | F1-Score |
+| ------ | ------  | ------ |
+||||
+||||
+||||
+||||
+||||
 
 Precision
 |     0.52
