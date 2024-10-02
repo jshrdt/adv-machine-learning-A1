@@ -1,13 +1,13 @@
-## helper classes ##
+## Class definitons ##
 # Imports
 import os
 import pandas as pd
-from PIL import Image
 import numpy as np
 import torch
+import torch.nn as nn
+from PIL import Image
 
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 class DataLoader:
     def __init__(self, src_dir: str, data_specs: dict):
@@ -21,23 +21,24 @@ class DataLoader:
         """Return Latin/Thai character corresponding to unique label idx."""
         return self.filenr2char[self.le.inverse_transform([idx])[0]]
                 
-    def _read_data(self, src_dir: str,
-                   specs: dict) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        """Return training, dev, and test data df splits of data according to specs.
-        Fit label encoder and encode file labels.
+    def _read_data(self, src_dir: str, specs: dict) -> \
+            tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """Return training, dev, and test data df splits of data 
+        according to specs. Fit label encoder and encode file labels.
         """
         fileinfo = list()
         # Walk source directory, only searching folders fulfilling specs.
         for root, dirs, files in os.walk(src_dir):
             root_sep = root.split('/')
+            # Check directory against specs.
             if ((root_sep[-4] in specs['languages'])
                 and (root_sep[-2] in specs['dpis']) 
                 and (root_sep[-1] in specs['fonts'])):
                 # Extract all image files + character identifier labels.
                 for fname in files:
                     if fname.endswith('bmp'):
-                        fileinfo.append((os.path.join(root, fname), fname[-7:-4]))
-        
+                        fileinfo.append((os.path.join(root, fname),
+                                         fname[-7:-4]))
         print('Preprocessing data...')
         # Transform files + labels data to pd df for easy accessing.
         data_df = pd.DataFrame(fileinfo, columns=['files', 'labels'])
@@ -100,7 +101,7 @@ class DataLoader:
 
 class OCRData:
     def __init__(self, data: pd.DataFrame, device: torch.device,
-                 size_to: tuple[int, int]=None, mode=None):
+                 size_to: tuple[int, int] = None, mode=None):
         self.device = device
         self.avg_size = size_to
         self.mode = mode
@@ -144,6 +145,44 @@ class OCRData:
                         imgs.reshape(size[0], size[1]*size[2])).reshape(size)
                                    
         return scaled_imgs
+    
+    
+class OCRModel(nn.Module):
+    def __init__(self, n_classes: int, img_dims: tuple[int, int], idx_to_char):
+        super(OCRModel, self).__init__()
+        # Initialise model params.
+        self.input_size = img_dims[0]*img_dims[1]
+        self.hsize_1 = int(self.input_size/2)
+        self.output_size = n_classes
+        self.idx_to_char = idx_to_char
+        self.img_dims = img_dims  # used to resize test data
+        
+        # Define net structure.
+        self.net1 = nn.Sequential(
+            nn.Conv2d(1, 1, 3, padding=1),
+            nn.Flatten()
+            )
+        
+        self.net2 = nn.Sequential(
+            nn.Linear(self.input_size, self.hsize_1),
+            #nn.Dropout(0.05),
+            nn.ReLU(),
+            nn.Linear(self.hsize_1, self.output_size),
+            nn.LogSoftmax(dim=1)
+            )
+        
+    def forward(self, X: torch.Tensor, mode: str=None) -> torch.Tensor|str:
+        # Reshape batched input and pass through for convolutional layer.
+        net1_output = self.net1(X.reshape(1, X.shape[0], X.shape[1]*X.shape[2]))
+        # Send output through classifier.
+        preds = self.net2(net1_output.reshape(-1, self.input_size))
+
+        if mode=='train':
+            # Return LogSoftMax distribution over classes.
+            return preds
+        else:
+            # Return predicted character.
+            return self.idx_to_char(int(preds.argmax()))
     
 if __name__=="__main__":
     pass

@@ -1,10 +1,14 @@
-### testing script ###
-print('Compiling...')
-# Imports
+### Testing script ###
+# Imports.
+import argparse
+import pandas as pd
+import torch
+from tqdm import tqdm
 from sklearn.metrics import (precision_score, recall_score, f1_score,
                              accuracy_score)
-import pandas as pd
-from train_ML2A1 import *
+
+from dataloader_ML2A1 import DataLoader, OCRData, OCRModel
+from train_ML2A1 import init_train
 
 # Initialise argument parser and define command line arguments.
 parser = argparse.ArgumentParser(formatter_class=
@@ -26,7 +30,7 @@ parser.add_argument('-srcd', '--source_dir',
                     default='/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/',
                     help='Pass a custom source directory to read image data from.')
 
-def get_model(loadfile: str, test_specs: dict) -> CNN:
+def get_model(loadfile: str, test_specs: dict) -> OCRModel:
     """Return model to be tested. Loaded from file or newly trained."""
     # Load model, get test data according to specs.
     if loadfile:
@@ -50,14 +54,19 @@ def get_model(loadfile: str, test_specs: dict) -> CNN:
                 train_specs = get_new_train_specs()
                 
             # Get info on params/savefile for training loop.
-            if input('\nKeep default params for epochs (5) | batch_size (32) | '
-                    +'savefile (None)?\n(y/n) >> ') =='y':
+            if input('\nKeep default for epochs (20) | batch_size (128) | learning'
+                    + ' rate (0.0025) | savefile (None)?\n(y/n) >> ') == 'y':
                 m = init_train(src_dir, train_specs, device) 
             else:
-                epochs = int(input('\nNumber of epochs:\n(int) >> '))
-                b_s = int(input('\nSize of batches:\n(int) >> '))
+                epochs = input('\nNumber of epochs:\n(None|int) >> ')
+                epochs = int(epochs) if epochs else 20
+                b_s = input('\nSize of batches:\n(None|int) >> ')
+                b_s = int(b_s) if b_s else 64
+                lr = input('\nLearning rate:\n(None|float) >> ')
+                lr = float(lr) if lr else 0.001
                 save = input('\nFile/pathname to save model to:\n(None|str) >> ')
-                m = init_train(src_dir, train_specs, device, epochs, b_s, save)
+                m = init_train(src_dir, train_specs, device, epochs, b_s, lr,
+                               save)
         else:
             print('Test script exited.')
             
@@ -87,7 +96,7 @@ def get_new_train_specs() -> dict:
     
     return specs
 
-def test(data: DataLoader, model: CNN, device: torch.device) -> tuple[list, list]:
+def test(data: DataLoader, model: OCRModel, device: torch.device) -> tuple[list, list]:
     """Test model on data, return model predictions and gold labels."""
     # Transform test data.
     print('Transforming test data...')        
