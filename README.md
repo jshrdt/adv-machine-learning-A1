@@ -451,9 +451,31 @@ ___
 
 ## Bonus part
 
+$ python3 bonus_script.py
+
+The bonus part is more of a demo/experiment on how very simplistic methods might begin to extract similar data to what is contained in the txt folders of the testing directory. There are multiple tasks to solve here: Reducing the image to 'relevant' text info (ignoring page numbers, logos, graph lines), sorting this relevant text into units corresponding to the txt files, splitting those units into lines (and sometimes columns beforehand, as is the case for many journals), finding word borders in those lines, and finally isolating + classifying the characters contained in those words.
+
+I found some promising solutions working with openCV (e.g. https://stackoverflow.com/questions/57249273/how-to-detect-paragraphs-in-a-text-document-image-for-a-non-consistent-text-stru), but I decided to see how far rather simple heuristics could get me.
+
+For this demo I used './ThaiOCR/ThaiOCR-TestSet/Journal/Image/200dpi_BW/jn_002sb.bmp' and considered the format of such scanned black/white document with a binary pixel encoding. The script is not equipped to deal with multi-column text, though implementing would be possible with the same methods (isolate paragraph first, then check for large vertical gaps before splitting rows).
+
+The script attempts to solve the tasks described above by exploiting empty (sum along axis == 0) rows and columns in a particular order. Overall, this worked quite well – or at least better than expected and considering this file's format is much simpler in comparison to some others – but the bottleneck for character classification is the final step: character isolation. The method here relies on entirely empty columns to discern characters, which is frequently, especially at lower resolutions, not the case. Without a margin of tolerance, many character blocks will fuse with their neighbours. Testing the model used for predictions shows sufficiently high performance (>0.95) so it can be ruled out as the cause for the many errors. A possible simple work-around for the character fusion could be to check for overly large character-unit lengths and attempting to split this accordingly/blindly.
+
+Running the script requires a model trained on all of the training data, the script currently works on a single file for which both the image and the text files were specified manually inside the script. On execution, the predicted characters are printed to the console, separated by their paragraph units.
+
+Concrete evaluation could be done on each level of unit blocking as well, correct amount of paragraphs/lines, words, and characters within. Comparison across multiple files could also aid in finding measures to approximate what whitespace size or tolerance margin would be beneficial to assume.
+
+During character isolation, it became apparent that the model is surprisingly sensitive to padding, even for a single row or column of empty pixel in the margins. On the one hand this makes sense, as no padding was used during training, however, the impact of even slight margins still surprised me:
+
+E.g.  Output for dummy image with '2.5 Drawing Editor'  
+- No empty lines: 2.s DraWing EdItor  
+- single row above/below: 2*s Dอ์aW1ng Edi*๐r    
+- 1+ empty rows above/below: ?อื่(ติด)5 pfฐฟs6ฏ rdฝั(ติด)xอิE  
+- single empty column left/right: 2อึ่(ติด)5 p๔อีฟs6ฏ rdๆfbE  
+
+Comprehensive model performance for reference:
+
 > $ python3 test_ML2A1.py -lg Thai Numeric Special English -dpi 200 300 400 -ft normal bold bold_italic italic -v
---------------------------------------------------------------------------------
-Evaluation
 
 Overall accuracy: 0.96
 
@@ -467,55 +489,4 @@ min        0.52    0.46      0.52
 50%        0.99    0.99      0.99
 75%        1.00    1.00      1.00
 max        1.00    1.00      1.00
-
-Overview of 5 worst performing classes per measure:
-
-| Precision | Recall | F1-Score |
-| ------ | ------  | ------ |
-||||
-||||
-||||
-||||
-||||
-
-Precision
-|     0.52
--     0.58
-l     0.60
-อ่    0.64
-I     0.67
-Name: Precision, dtype: float64
-
-Recall
-i     0.46
-|     0.51
-l     0.54
-I     0.65
-อ่    0.66
-Name: Recall, dtype: float64
-
-F1-score
-|     0.52
-i     0.55
-l     0.57
-อ่    0.65
-I     0.66
-Name: F1-score, dtype: float64
-
-
-? Isolating characters, guessing whitespaces
-
-* model is surprisingly sensitive to even one row or column of empty pixel in the margins
-
-i.e.  Output for dummy image with '2.5 Drawing Editor'. 
-- No empty lines: 2.s DraWing EdItor  
-- single row above/below: 2*s Dอ์aW1ng Edi*๐r  
-- 1+ empty rows above/below: ?อื่(ติด)5 pfฐฟs6ฏ rdฝั(ติด)xอิE - -
-- single empty column left/right: 2อึ่(ติด)5 p๔อีฟs6ฏ rdๆfbE - -
-
-
-
-
-* data being equally represented might make classification harder: most test/'natural' has lower amount of special and/or numeric characters
-
 
