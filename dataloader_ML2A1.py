@@ -68,7 +68,9 @@ class DataLoader:
         # Walk source directory, only searching folders fulfilling specs.
         for root, dirs, files in os.walk(src_dir):
             root_sep = root.split('/')
-            # Check directory against specs.
+            # Check directory name against specs.
+            # Maxiamlly exploitative of directory structure/file naming
+            # convention in this data set specifially.
             if ((root_sep[-4] in specs['languages'])
                 and (root_sep[-2] in specs['dpis']) 
                 and (root_sep[-1] in specs['fonts'])):
@@ -86,7 +88,9 @@ class DataLoader:
         data_df['labels'] = self.le.transform(data_df['labels'])
 
         # Seed shuffling of data, to include all character types per split, but
-        # still ensure any test data is always unseen.
+        # still ensure any test data is always unseen. Strong assumption that 
+        # due to size of data this will lead to classes being represented about 
+        # equally in each split.
         data_df = data_df.sample(frac=1, random_state=11, ignore_index=True)
 
         # Set cutoff points.
@@ -115,7 +119,7 @@ class DataLoader:
         return avg_size
 
     def _get_mapping(self, src_dir: str) -> dict:
-        """Return dictionary mapping file labels to EnglishTthai character."""
+        """Return dictionary mapping file labels to English/Thai character."""
         # Get mapping information from txt file.
         for root, dirs, files in os.walk(src_dir+'English'+'/'):
             with open(root+files[0], 'rb') as f:
@@ -203,7 +207,7 @@ class OCRModel(nn.Module):
 
         self.net2 = nn.Sequential(
             nn.Linear(self.input_size, self.hsize_1),
-            #nn.Dropout(0.05),
+            #nn.Dropout(0.1),
             nn.ReLU(),
             nn.Linear(self.hsize_1, self.output_size),
             nn.LogSoftmax(dim=1))
