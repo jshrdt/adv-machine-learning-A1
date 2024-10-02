@@ -2,7 +2,7 @@
 
 #### Required modules
 
-* argparse, numpy, os, pandas, PIL, random, sklearn.metrics, sklearn.preprocessing, torch, tqdm
+* argparse, numpy, os, pandas, PIL, sklearn.metrics, sklearn.preprocessing, torch, tqdm
 
 ___
 
@@ -10,7 +10,7 @@ ___
 
 ### Running train_ML2A1.py:
 
-(1) Train a new model, optional: -s [file/pathname], save to file.  
+(1) Train a new model, optional: -s [file/pathname], save model to file.  
 > $ python3 train_ML2A1.py -lg Thai -dpi 200 -ft normal -s Thai200normal_model
 
 ### Running test_ML2A1.py:
@@ -18,19 +18,19 @@ ___
 (1) Test a pre-trained model loaded from file.
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -ld Thai200normal_model
 
-(2) Train & test a new model, optional: save to file.
+(2) Train & test a new model on the same data specifications in succession, save to file.  
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal  
-
-> No pre-trained model found, train new model?  
+>
+> No model loaded, train new model?  
 > (y/n) >> y  
-
+>
 > File/pathname to save model to:  
-> (None|str) >> Thai200_normal
-
+> (None|str) >> Thai_200_normal  
+>
 > Train new model on same specifications as test data?  
 > {'languages': ['Thai'], 'dpis': ['200'], 'fonts': ['normal']}  
 > (y/n) >> y  
-
+>
 > Keep defaults for epochs (20) | batch_size (128) | learning rate (0.0025)?  
 > (y/n) >> y  
 
@@ -77,7 +77,7 @@ The following arguments are optional. --loadfile specifies where to find the pre
 
 ### Dataloader
 
-Contains DataLoader, OCRData and OCRModel classes, the former two are used to filter relevant files from source directory and transforming the data to the required format for both training and testing. The latter is a blueprint for the CNN model. File has no main function.
+Contains DataLoader, OCRData, and OCRModel classes, as well as ArgumentParser details. The former two are used to filter relevant files from source directory and transforming the data to the required format for both training and testing. OCRModel latter is a blueprint for the CNN model. File has no main function.
 
 ___
 

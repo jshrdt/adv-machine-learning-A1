@@ -20,7 +20,7 @@ def get_model(loadfile: str, test_specs: dict) -> OCRModel:
                            map_location=torch.device('cpu'))
         else:
              m = torch.load(loadfile, weights_only=False)
-    # Get info to train new model.
+    # Get info to train new model with train script.
     else:
         print('-'*80)
         if input('No model loaded, train new model?\n(y/n) >> ') == 'y':

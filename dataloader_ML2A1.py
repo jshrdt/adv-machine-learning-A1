@@ -224,5 +224,6 @@ class OCRModel(nn.Module):
             # Return predicted character.
             return self.idx_to_char(int(preds.argmax()))
 
+
 if __name__=="__main__":
     pass
