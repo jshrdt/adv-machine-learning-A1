@@ -108,7 +108,7 @@ Overview of measures across classes:
 Overview of 5 worst performing classes per measure:
 
 | Precision | Recall | F1-Score |
-| ------ | ------  | ------ |
+| ------ | ------  | ------ |
 | 0.62  | 0.47 | 0.58  |  
 
 
