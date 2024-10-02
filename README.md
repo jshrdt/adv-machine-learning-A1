@@ -352,7 +352,6 @@ Overview of 5 worst performing classes per measure:
 
 ___
 
-
 7) All styles –> All styles
 
 > $ python3 test_ML2A1.py -lg English Thai -dpi 200 300 400 -ft normal italic bold bold_italic -v
@@ -380,6 +379,12 @@ Overview of 5 worst performing classes per measure:
 |อ่   | 0.73|I   |  0.72|อ่   | 0.74|
 |I    | 0.75|อ่   | 0.74|I    | 0.74|
 |.     |0.76|.    | 0.75|.    | 0.76|
+
+I was surprised to see the period pop up here & in experiment 6. I'm not sure what other characters it competes with this strongly, but maybe this is one of the characters that would benefit from padding to be less similar to, for example, circular Thai characters with busy centres of which there are quite a few. 
+
+In general it looks to me as though training + testing across different font styles is a major challenge, as is the lower resolution condition of 200 dpi overall. It is also possible that this applies to the bold font style in particular. But in fact, training on English 200 italic and testing on the normal font yielded an overall accuracy score of only 0.71, even less in the Thai case (0.62) – dramatically lower than the other experiments described here. Changes in font style alter character shapes strongly, so this lower performance is both explainable and makes the other more positive experiment results more believable.
+
+Another observation: Thai models seem to reach better performance than English models under many conditions, despite having more classes to distinguish. So perhaps the problem cases (more below) in English are just trickier.
 
 ___
 
@@ -481,12 +486,13 @@ Overall accuracy: 0.96
 
 Overview of measures across classes:
 
-      Precision  Recall  F1-score
-mean       0.96    0.96      0.96
-std        0.08    0.08      0.08
-min        0.52    0.46      0.52
-25%        0.96    0.97      0.97
-50%        0.99    0.99      0.99
-75%        1.00    1.00      1.00
-max        1.00    1.00      1.00
+| | Precision | Recall | F1-score |
+| --- | --- | --- | --- |
+|mean|       0.96|    0.96|      0.96|
+|std        |0.08    |0.08      |0.08|
+|min        |0.52|    0.46|      0.52|
+|25%        |0.96    |0.97   |   0.97|
+|50%        |0.99|    0.99|      0.99|
+|75%        |1.00    |1.00   |   1.00|
+|max|        1.00|    1.00|      1.00|
 
