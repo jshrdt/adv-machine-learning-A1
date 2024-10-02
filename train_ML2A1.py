@@ -87,7 +87,7 @@ def init_train(src_dir: str, specs: dict, device: torch.device,
     # Save model to file.
     if savefile:
         torch.save(m, savefile)
-        print('Model saved to', savefile, '\n')
+        print('\nModel saved to', savefile, '\n')
 
     if mode=='test':
         return m, datasets

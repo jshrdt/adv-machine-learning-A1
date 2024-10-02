@@ -38,8 +38,8 @@ def get_model(loadfile: str, test_specs: dict) -> OCRModel:
                 train_specs = get_new_train_specs()
 
             # Get info on params for training loop.
-            if input('\nKeep default for epochs (20) | batch_size (128) | learning'
-                    + ' rate (0.0025)?\n(y/n) >> ') == 'y':
+            if input('\nKeep defaults for epochs (20) | batch_size (128) | '
+                    + 'learningrate (0.0025)?\n(y/n) >> ') == 'y':
                 m, test_data = init_train(src_dir, train_specs, device,
                                           savefile=save, mode='test')
             else:
@@ -116,7 +116,7 @@ def evaluate(y_preds: list, y_true: list, verbose: bool=False):
     evals = pd.DataFrame((precision, recall, f1), index=measures,
                          columns=pred_labels).transpose()
     # Print evaluation.
-    print('-'*80)
+    print('\n', '-'*80)
     print('Evaluation')
     print('\nOverall accuracy:', round(accuracy, 2))
 

@@ -24,11 +24,14 @@ ___
 > No pre-trained model found, train new model?  
 > (y/n) >> y  
 
+> File/pathname to save model to:  
+> (None|str) >> Thai200_normal
+
 > Train new model on same specifications as test data?  
 > {'languages': ['Thai'], 'dpis': ['200'], 'fonts': ['normal']}  
 > (y/n) >> y  
 
-> Keep default params for epochs(5)/batch_size(32)/savefile(None)?  
+> Keep default params for epochs (20) | batch_size (128) | learning rate (0.0025)?  
 > (y/n) >> y  
 
 ___
@@ -45,11 +48,13 @@ The following arguments are required and determine which files will be extracted
 * --fonts (-ft):	normal | bold | italic | bold_italic | ...
 
 The following arguments are optional. The first two alter behaviour during the training loop. --savefile allows the trained model to be saved under the passed filename/path. The final argument may be used to specify a different directory to read the source data from.
-* --epochs (-ep):	any integer, defaults to 5
-* --batch_size (-bs):	any integer, defaults to 32
+* --epochs (-ep):	any integer, defaults to 10
+* --batch_size (-bs):	any integer, defaults to 128
+* --learning_rate (-lr) float between 0-1, defaults to 0.0025
 * --savefile (-s):	any filename/path, defaults to None
 * --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
 
+Example execution:  
 > $ python3 train_ML2A1.py -lg Thai English -dpi 200 300 -ft italic -ep 8 -bs 64 -s ThaiEn_200300_ita_custom -srcd [custom/path/to/OCR/data]
 
 
@@ -67,11 +72,12 @@ The following arguments are optional. --loadfile specifies where to find the pre
 * --verbose (-v):	on/off flag
 * --source_dir (-srcd):	pathname to directory for OCR data, defaults to '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/' on gpu, '../ThaiOCR/ThaiOCR-TrainigSet/' on cpu
 
+Example execution:  
 > $ python3-s test_ML2A1.py -lg Thai -dpi 400 -ft bold -ld ThaiEn_200300_ita_custom -v -srcd [custom/path/to/OCR/data]
 
 ### Dataloader
 
-Contains DataLoader and OCRData classes, used to filter relevant files from source directory and transform to required format for both training and testing. File has no main function.
+Contains DataLoade, OCRData and OCRModel classes, the former two are used to filter relevant files from source directory and transforming the data to the required format for both training and testing. The latter is a blueprint for the CNN model. File has no main function.
 
 ___
 
@@ -80,6 +86,9 @@ ___
 1) Thai normal text, 200dpi -> Thai normal text, 200dpi
 
 > $ python3 test_ML2A1.py -lg Thai -dpi 200 -ft normal -v  
+
+---
+
 Evaluation
 
 Overall accuracy: 0.92
