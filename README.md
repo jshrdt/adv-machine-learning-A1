@@ -42,7 +42,7 @@ To train a new model, run the train script and specify what data to use from the
 The following arguments are required and determine which files will be extracted from the source directory to use during training. They can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
 * --languages (-lg):	Thai | English | Thai English
 * --dpis (-dpi): 	200 | 300 | 400 | ...
-* --fonts (-ft):	normal | bold | italic | italic_bold | ...
+* --fonts (-ft):	normal | bold | italic | bold_italic | ...
 
 The following arguments are optional. The first two alter behaviour during the training loop. --savefile allows the trained model to be saved under the passed filename/path. The final argument may be used to specify a different directory to read the source data from.
 * --epochs (-ep):	any integer, defaults to 5
@@ -60,7 +60,7 @@ To test a model, run the test script and specify what data to test on. The scrip
 The following arguments are required and determine which files will be extracted from the source directory to use during testing. They can take a singular of the listed values, or any combination of them, separated by a whitespace (example shown for --languages, thereafter indicated by ...).
 * --languages (-lg):	Thai | English | Thai English
 * --dpis (-dpi): 	200 | 300 | 400 | ...
-* --fonts (-ft):	normal | bold | italic | italic_bold | ...
+* --fonts (-ft):	normal | bold | italic | bold_italic | ...
 
 The following arguments are optional. --loadfile specifies where to find the pre-trained model, if invalid/left unspecified, the test script allows the user to specify information to train a new model using the train script. --verbose increases the amount of detail printed during model evaluation. The final argument may be used to specify a different directory to read the source data from.
 * --loadfile (-ld):		any filename/path, defaults to None
@@ -269,7 +269,7 @@ ___
 
 5) All Thai -> All Thai
 
-> $ python3 test_ML2A1.py -lg Thai -dpi 200 300 400 -ft normal bold italic italic_bold -v
+> $ python3 test_ML2A1.py -lg Thai -dpi 200 300 400 -ft normal bold italic bold_italic -v
 
 --------------------------------------------------------------------------------
 Evaluation
@@ -322,88 +322,93 @@ ___
 --------------------------------------------------------------------------------
 Evaluation
 
-Overall accuracy: 0.94
+Overall accuracy: 0.97
 
 Overview of measures across classes:
 
-      Precision  Recall  F1-score  
-mean       0.95    0.94      0.94  
-std        0.10    0.11      0.10  
-min        0.29    0.31      0.42  
-25%        0.94    0.94      0.94  
-50%        0.98    0.98      0.97  
-75%        1.00    1.00      0.99  
-max        1.00    1.00      1.00  
+      Precision  Recall  F1-score
+mean       0.97    0.97      0.97
+std        0.07    0.07      0.07
+min        0.37    0.51      0.47
+25%        0.97    0.98      0.97
+50%        0.99    0.99      0.99
+75%        1.00    1.00      1.00
+max        1.00    1.00      1.00
 
 Overview of 5 worst performing classes per measure:
 
-Precision  
-อ่    0.29  
-l     0.53  
-.     0.59  
-o     0.60  
-I     0.67  
+Precision
+l     0.37
+I     0.68
+i     0.71
+อ่    0.83
+V     0.83
+Name: Precision, dtype: float64
 
-Recall  
-i    0.31  
-I    0.35  
-l    0.49  
-V    0.57  
-O    0.58  
+Recall
+i     0.51
+.     0.64
+l     0.65
+อ่    0.66
+I     0.74
+Name: Recall, dtype: float64
 
-F1-score  
-อ่    0.42  
-i     0.46  
-I     0.46  
-l     0.51  
-.     0.64  
+F1-score
+l     0.47
+i     0.59
+I     0.71
+อ่    0.74
+.     0.74
+Name: F1-score, dtype: float64
 
 ___
 
 
 7) All styles -> All styles
 
-> $ python3 test_ML2A1.py -lg English Thai -dpi 200 300 400 -ft normal italic bold italic_bold -v
+> $ python3 test_ML2A1.py -lg English Thai -dpi 200 300 400 -ft normal italic bold bold_italic -v
 
 --------------------------------------------------------------------------------
 Evaluation
 
-Overall accuracy: 0.91
+Overall accuracy: 0.97
 
 Overview of measures across classes:
 
-      Precision  Recall  F1-score  
-mean       0.92    0.91      0.91  
-std        0.11    0.14      0.12  
-min        0.37    0.21      0.34  
-25%        0.92    0.92      0.90  
-50%        0.97    0.96      0.96  
-75%        0.99    0.99      0.98  
-max        1.00    1.00      1.00  
+      Precision  Recall  F1-score
+mean       0.97    0.97      0.97
+std        0.07    0.06      0.06
+min        0.54    0.59      0.56
+25%        0.97    0.97      0.97
+50%        0.99    0.99      0.99
+75%        1.00    1.00      1.00
+max        1.00    1.00      1.00
 
 Overview of 5 worst performing classes per measure:
 
-Precision  
-อ่    0.37  
-i     0.43  
-C     0.55  
-l     0.57  
-o     0.59  
+Precision
+l     0.54
+i     0.58
+อ่    0.73
+I     0.75
+.     0.76
+Name: Precision, dtype: float64
 
-Recall  
-c    0.21  
-l    0.35  
-i    0.45  
-v    0.46  
-O    0.46  
+Recall
+l     0.59
+i     0.65
+I     0.72
+อ่    0.74
+.     0.75
+Name: Recall, dtype: float64
 
-F1-score  
-c     0.34  
-l     0.43  
-i     0.44  
-อ่    0.50  
-v     0.56  
-
+F1-score
+l     0.56
+i     0.61
+อ่    0.74
+I     0.74
+.     0.76
+Name: F1-score, dtype: float64
 ___
 
 ### Other
@@ -453,6 +458,51 @@ ___
 
 ## Bonus part
 
+$ python3 test_ML2A1.py -lg Thai Numeric Special English -dpi 200 300 400 -ft normal bold bold_italic italic -v
+
+--------------------------------------------------------------------------------
+Evaluation
+
+Overall accuracy: 0.96
+
+Overview of measures across classes:
+
+      Precision  Recall  F1-score
+mean       0.96    0.96      0.96
+std        0.08    0.08      0.08
+min        0.52    0.46      0.52
+25%        0.96    0.97      0.97
+50%        0.99    0.99      0.99
+75%        1.00    1.00      1.00
+max        1.00    1.00      1.00
+
+Overview of 5 worst performing classes per measure:
+
+Precision
+|     0.52
+-     0.58
+l     0.60
+อ่    0.64
+I     0.67
+Name: Precision, dtype: float64
+
+Recall
+i     0.46
+|     0.51
+l     0.54
+I     0.65
+อ่    0.66
+Name: Recall, dtype: float64
+
+F1-score
+|     0.52
+i     0.55
+l     0.57
+อ่    0.65
+I     0.66
+Name: F1-score, dtype: float64
+
+
 ? Isolating characters, guessing whitespaces
 
 * model is surprisingly sensitive to even one row or column of empty pixel in the margins
@@ -461,7 +511,6 @@ i.e.  Output for dummy image with '2.5 Drawing Editor'.
 - No empty lines: 2.s DraWing EdItor  
 - single row above/below: 2*s Dอ์aW1ng Edi*๐r  
 - 1+ empty rows above/below: ?อื่(ติด)5 pfฐฟs6ฏ rdฝั(ติด)xอิE - -
-- 1+ empty columns left/right: 2.s DraWIng Ed|*or - -
 - single empty column left/right: 2อึ่(ติด)5 p๔อีฟs6ฏ rdๆfbE - -
 
 

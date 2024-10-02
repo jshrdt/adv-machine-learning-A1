@@ -2,8 +2,9 @@
 # Imports
 from PIL import Image
 import numpy as np
-
-from test_ML2A1 import *
+import torch
+import pandas as pd
+from dataloader_ML2A1 import OCRData
 
 # proper solution would be something like this with openCV, https://stackoverflow.com/questions/57249273/how-to-detect-paragraphs-in-a-text-document-image-for-a-non-consistent-text-stru
 
@@ -40,7 +41,7 @@ def get_blocks(fname):
     #lines = [line for line in np.split(bin_img, np.where(bin_img.sum(axis=1)==0)[0])
      #        if sum(line.sum(axis=1)) != 0]
     
-    return [block for block in blocks if len(block)>1]
+    return blocks
     
 
 def get_words(lines):
@@ -108,7 +109,7 @@ if __name__=="__main__":
     else:
         device = 'cpu'
         src_dir = './ThaiOCR/ThaiOCR-TrainigSet/'
-        model = torch.load('bonus_alldirs_allstyles', weights_only=False,
+        model = torch.load('bonus_model_all', weights_only=False,
                        map_location=torch.device('cpu')).eval()
 
 
@@ -119,7 +120,7 @@ if __name__=="__main__":
 
     # read img, get list of paragraph blocks
     blocks = get_blocks(fname)
-    print(len(blocks))
+    #print(len(blocks))
     
     for block in blocks:
         # print(len(block))

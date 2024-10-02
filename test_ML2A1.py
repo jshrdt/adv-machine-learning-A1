@@ -24,6 +24,9 @@ def get_model(loadfile: str, test_specs: dict) -> OCRModel:
     else:
         print('-'*80)
         if input('No model loaded, train new model?\n(y/n) >> ') == 'y':
+            # Get info on savefile.
+            save = input('\nFile/pathname to save model to:\n(None|str) >> ')
+
             # Get specifications on what training data to use for new model.
             if input('\nTrain new model on same specifications as test data?'
                     +f'\n{specs}\n(y/n) >> ') == 'y':
@@ -34,10 +37,11 @@ def get_model(loadfile: str, test_specs: dict) -> OCRModel:
                 # Get new train specs.
                 train_specs = get_new_train_specs()
 
-            # Get info on params/savefile for training loop.
+            # Get info on params for training loop.
             if input('\nKeep default for epochs (20) | batch_size (128) | learning'
-                    + ' rate (0.0025) | savefile (None)?\n(y/n) >> ') == 'y':
-                m, test_data = init_train(src_dir, train_specs, device, mode='test')
+                    + ' rate (0.0025)?\n(y/n) >> ') == 'y':
+                m, test_data = init_train(src_dir, train_specs, device,
+                                          savefile=save, mode='test')
             else:
                 epochs = input('\nNumber of epochs:\n(None|int) >> ')
                 epochs = int(epochs) if epochs else 20
@@ -45,9 +49,8 @@ def get_model(loadfile: str, test_specs: dict) -> OCRModel:
                 b_s = int(b_s) if b_s else 64
                 lr = input('\nLearning rate:\n(None|float) >> ')
                 lr = float(lr) if lr else 0.001
-                save = input('\nFile/pathname to save model to:\n(None|str) >> ')
-                m, test_data = init_train(src_dir, train_specs, device, epochs, b_s, lr,
-                               save, mode='test')
+                m, test_data = init_train(src_dir, train_specs, device, epochs,
+                                          b_s, lr, savefile=save, mode='test')
         else:
             print('Test script exited.')
 
@@ -136,7 +139,7 @@ def evaluate(y_preds: list, y_true: list, verbose: bool=False):
 if __name__=="__main__":
     # Set device and default source directory.
     if torch.cuda.is_available():
-        device = 'cuda:1'
+        device = 'cuda:3'
         src_dir = '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
     else:
         device = 'cpu'

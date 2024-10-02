@@ -87,19 +87,18 @@ def init_train(src_dir: str, specs: dict, device: torch.device,
     # Save model to file.
     if savefile:
         torch.save(m, savefile)
-        print('Model saved to', savefile)
+        print('Model saved to', savefile, '\n')
 
     if mode=='test':
         return m, datasets
     else:
-        return None
-
+        return m
 
 
 if __name__=="__main__":
     # Set device and default source directory.
     if torch.cuda.is_available():
-        device = 'cuda:1'
+        device = 'cuda:3'
         src_dir = '/scratch/lt2326-2926-h24/ThaiOCR/ThaiOCR-TrainigSet/'
     else:
         device = 'cpu'
@@ -112,5 +111,5 @@ if __name__=="__main__":
              'fonts': args.fonts}
 
     # Initiate training, optionally saves model.
-    init_train(src_dir, specs, device, args.epochs, args.batch_size,
-               args.learning_rate, args.savefile)
+    model = init_train(src_dir, specs, device, args.epochs, args.batch_size,
+                       args.learning_rate, args.savefile)
