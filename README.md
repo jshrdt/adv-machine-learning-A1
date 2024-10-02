@@ -107,34 +107,6 @@ Overview of measures across classes:
 
 Overview of 5 worst performing classes per measure:  
 
-Precision  
-| Character | Score |
-| --- | --- |
-| า    |      0.62 |
-|ซ     |      0.64 |
-|อี่(ติด) |      0.66 |
-|สี(ติด) |      0.67 |
-|ช     |      0.70 |
-Name: Precision, dtype: float64
-
-Recall
-| Character | Score |
-| --- | --- |
-|อ์ไ(ติด)    0.47
-|ซ           0.53
-|ๅ           0.55
-|อื          0.67
-|อึ่(ติด)    0.71
-Name: Recall, dtype: float64
-
-F1-score
-|ซ           0.58
-|อ์ไ(ติด)    0.59
-|ๅ           0.63
-|า           0.70
-|อื          0.78
-Name: F1-score, dtype: float64  
-
 
 | Precision | Recall | F1-Score |
 | ------ | ------  | ------ |
