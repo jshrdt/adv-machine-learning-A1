@@ -95,7 +95,7 @@ Overall accuracy: 0.92
 
 Overview of measures across classes:
 
-| 1 | Precision | Recall | F1-score |
+|  | Precision | Recall | F1-score |
 | --------- | ------ | -------- | --- |
 | mean      | 0.92   | 0.92     | 0.92 |
 | std       | 0.10   | 0.11     | 0.09 |
