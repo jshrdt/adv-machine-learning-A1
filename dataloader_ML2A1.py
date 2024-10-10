@@ -44,7 +44,7 @@ def parse_input_args(mode='train'):
                             help='Pass to receive per-class evaluation metrics '
                             + 'and lowest performing classes')
 
-        return parser
+    return parser
 
 
 class DataLoader:
